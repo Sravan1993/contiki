@@ -12,7 +12,6 @@ resolv.c					\
 sicslowpan.c					\
 simple-udp.c					\
 tcpdump.c					\
-tcpip.c						\
 uaodv-rt.c					\
 uaodv.c						\
 uip-debug.c					\
@@ -30,4 +29,5 @@ uip-udp-packet.c				\
 uip.c						\
 uip6.c						\
 uip_arp.c					\
-uiplib.c
+uiplib.c					\
+tcpip.c

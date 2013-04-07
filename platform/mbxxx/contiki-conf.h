@@ -54,7 +54,7 @@
 /* 802.15.4 radio channel */
 #define RF_CHANNEL                              16
 /* 802.15.4 PAN ID */
-#define IEEE802154_CONF_PANID                   0x1234
+#define IEEE802154_CONF_PANID                   0x1235
 /* Use EID 64, enable hardware autoack and address filtering */
 #define RIMEADDR_CONF_SIZE                      8
 #define UIP_CONF_LL_802154                      1
@@ -150,11 +150,24 @@
 
 /* Network setup for non-IPv6 (rime). */
 #define NETSTACK_CONF_NETWORK rime_driver
+#define UIP_CONF_IPV6                           0
+
 
 #endif /* WITH_UIP6 */
 
 #ifdef PROJECT_CONF_H
 #include PROJECT_CONF_H
 #endif /* PROJECT_CONF_H */
+
+#include <stdint.h>
+
+/* Private define ------------------------------------------------------------*/
+
+typedef uint8_t int8u;
+typedef int8_t int8s;
+typedef uint16_t int16u;
+typedef int16_t int16s;
+typedef uint32_t int32u;
+typedef int32_t int32s;
 
 #endif /* __CONTIKI_CONF_H__ */

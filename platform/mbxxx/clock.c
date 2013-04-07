@@ -47,7 +47,7 @@
 #include PLATFORM_HEADER
 #include "hal/error.h"
 #include "hal/hal.h"
-#include "dev/stm32w_systick.h"
+#include "dev/stm32w-systick.h"
 
 #include "sys/clock.h"
 #include "sys/etimer.h"

@@ -62,12 +62,12 @@ PROCESS_THREAD(example_shell_process, ev, data)
   shell_blink_init();
   /*shell_checkpoint_init();*/
   /*shell_coffee_init();*/
-  shell_download_init();
+  /*shell_download_init();*/
   /*shell_exec_init();*/
-  shell_file_init();
-  shell_httpd_init();
-  shell_irc_init();
-  shell_netfile_init();
+  /*shell_file_init();*/
+  /*shell_httpd_init();*/
+  /*shell_irc_init();*/
+  /*shell_netfile_init();*/
   /*shell_ping_init();*/ /* uIP ping */
   shell_power_init();
   /*shell_profile_init();*/
@@ -81,15 +81,15 @@ PROCESS_THREAD(example_shell_process, ev, data)
   shell_rime_init();
   /*shell_rsh_init();*/
   shell_run_init();
-  shell_sendtest_init();
+  /*shell_sendtest_init();*/
   /*shell_sky_init();*/
-  shell_tcpsend_init();
+  /*shell_tcpsend_init();*/
   shell_text_init();
   shell_time_init();
-  shell_udpsend_init();
+  /*shell_udpsend_init();*/
   shell_vars_init();
-  shell_wget_init();
-  shell_tweet_init();
+  /*shell_wget_init();*/
+  /*shell_tweet_init();*/
 
   PROCESS_END();
 }
