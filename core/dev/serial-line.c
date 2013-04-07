@@ -61,33 +61,26 @@ serial_line_input_byte(unsigned char c)
 {
   static uint8_t overflow = 0; /* Buffer overflow: ignore until END */
   
-  printf("serial_line_input_byte %x\n", (unsigned int)c);
   if(IGNORE_CHAR(c)) {
-      printf("ignore char\n");
     return 0;
   }
 
   if(!overflow) {
-      printf("serial_line_input_byte !overflow\n");
     /* Add character */
     if(ringbuf_put(&rxbuf, c) == 0) {
       /* Buffer overflow: ignore the rest of the line */
       overflow = 1;
-      printf("serial_line_input_byte generated overflow\n");
     }
   } else {
     /* Buffer overflowed:
      * Only (try to) add terminator characters, otherwise skip */
-      printf("serial_line_input_byte overflow\n");
     if(c == END && ringbuf_put(&rxbuf, c) != 0) {
-        printf("serial_line_input_byte overflow deleted\n");
       overflow = 0;
     }
   }
 
   /* Wake up consumer process */
   process_poll(&serial_line_process);
-  printf("process_poll(&serial_line_process)\n");
   return 1;
 }
 /*---------------------------------------------------------------------------*/
@@ -107,26 +100,19 @@ PROCESS_THREAD(serial_line_process, ev, data)
     
     if(c == -1) {
       /* Buffer empty, wait for poll */
-        printf("Buffer empty, wait for poll\n");
       PROCESS_YIELD();
     } else {
-        printf("Buffer not empty\n");
       if(c != END) {
-          printf("c != END\n");
         if(ptr < BUFSIZE-1) {
-            printf("copy into buf\n");
           buf[ptr++] = (uint8_t)c;
         } else {
-            printf("ignore character\n");
           /* Ignore character (wait for EOL) */
         }
       } else {
-          printf("c == END\n");
         /* Terminate */
         buf[ptr++] = (uint8_t)'\0';
 
         /* Broadcast event */
-        printf("broadcast event '%s'\n", buf);
         process_post(PROCESS_BROADCAST, serial_line_event_message, buf);
 
         /* Wait until all processes have handled the serial line event */
@@ -134,7 +120,6 @@ PROCESS_THREAD(serial_line_process, ev, data)
           process_post(PROCESS_CURRENT(), PROCESS_EVENT_CONTINUE, NULL)) {
           PROCESS_WAIT_EVENT_UNTIL(ev == PROCESS_EVENT_CONTINUE);
         }
-        printf("reset ptr to zero\n");
         ptr = 0;
       }
     }
