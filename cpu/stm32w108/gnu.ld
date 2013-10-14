@@ -34,7 +34,7 @@ _ROM_base = DEFINED(ST_BTL) ? (0x08000000 + _BOOTLOADER_SIZE) : 0x08000000 ;
 /* include the memory spaces definitions sub-script */
 MEMORY
 {
-  RAM_region (xrw) :            ORIGIN = 0x20000000,            LENGTH = 16K
+  RAM_region (xrw) :            ORIGIN = 0x20000000,            LENGTH = 8K
   ROM_region (rx) :           ORIGIN = 0x08000000,            LENGTH = 128K-2K
   NVM_region (rx) :           ORIGIN = 0x0801F800,            LENGTH = 2K
   FIB_region (ra) :            ORIGIN = 0x08040000,            LENGTH = 2K
