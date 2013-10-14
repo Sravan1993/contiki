@@ -202,7 +202,8 @@ set_global_address(void)
   uip_ds6_addr_add(&ipaddr, 0, ADDR_AUTOCONF);
 
   /* set server address */
-  uip_ip6addr(&server_ipaddr, 0xaaaa, 0, 0, 0, 0, 0, 0, 1);
+  //uip_ip6addr(&server_ipaddr, 0xaaaa, 0, 0, 0, 0, 0, 0, 1);
+  uip_ip6addr(&server_ipaddr, 0xaaaa, 0, 0, 0, 0x280, 0xE103, 1, 0x36dd);
 
 }
 /*---------------------------------------------------------------------------*/

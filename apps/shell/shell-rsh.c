@@ -41,12 +41,12 @@
 #include "shell.h"
 
 #include "net/rime.h"
-#include "net/rime/meshconn.h"
+#include "net/rime/mesh.h"
 
 #include <stdio.h>
 #include <string.h>
 
-static struct meshconn_conn meshconn;
+static struct mesh_conn meshconn;
 static struct process *front_process;
 
 static int initiator = 0;
@@ -85,14 +85,14 @@ PROCESS_THREAD(shell_rsh_process, ev, data)
   shell_output_str(&rsh_command, "Connecting to ", buf);
 
   initiator = 1;
-  meshconn_connect(&meshconn, &receiver);
+  mesh_connect(&meshconn, &receiver);
 
   while(1) {
     PROCESS_WAIT_EVENT();
     if(ev == shell_event_input) {
       input = data;
       if(input->len1 + input->len2 == 0) {
-	meshconn_close_connection(&meshconn);
+    mesh_close_connection(&meshconn);
 	PROCESS_EXIT();
       }
       if(input->len1 + input->len2 >= PACKETBUF_SIZE) {
@@ -103,7 +103,7 @@ PROCESS_THREAD(shell_rsh_process, ev, data)
 	memcpy((char *)packetbuf_dataptr() + input->len1,
 	       input->data2, input->len2);
 	packetbuf_set_datalen(input->len1 + input->len2);
-	meshconn_send(&meshconn);
+    mesh_send(&meshconn, &receiver);
       }
     }
   }
@@ -132,18 +132,13 @@ PROCESS_THREAD(shell_rsh_server_process, ev, data)
       packetbuf_set_datalen(input->len1 + input->len2);
       /*      printf("Sending meshconn with %d + %d bytes\n",
 	      input->len1, input->len2);*/
-      meshconn_send(&meshconn);
+      mesh_send(&meshconn);
     }
     /*    PROCESS_WAIT_EVENT_UNTIL(ev == shell_event_input);*/
   }
   PROCESS_END();
 }
 /*---------------------------------------------------------------------------*/
-static void
-connected_meshconn(struct meshconn_conn *c)
-{
-  /*  printf("connected\n");*/
-}
 static void
 recv_meshconn(struct meshconn_conn *c)
 {
@@ -154,7 +149,7 @@ recv_meshconn(struct meshconn_conn *c)
   /* Echo reply */
   if(!initiator) {
     packetbuf_copyfrom("abcdefghijklmnopq", 18);
-    meshconn_send(c);
+    mesh_send(c);
   }
   
   return;
@@ -183,7 +178,7 @@ recv_meshconn(struct meshconn_conn *c)
 #endif
 }
 static void
-closed_meshconn(struct meshconn_conn *c)
+send_meshconn(struct meshconn_conn *c)
 {
   /*  printf("closed\n");*/
 }
@@ -192,22 +187,15 @@ timedout_meshconn(struct meshconn_conn *c)
 {
   /*  printf("timedout\n");*/
 }
-static void
-reset_meshconn(struct meshconn_conn *c)
-{
-  /*  printf("reset\n");*/
-}
 /*---------------------------------------------------------------------------*/
-static struct meshconn_callbacks meshconn_callbacks = { connected_meshconn,
-							recv_meshconn,
-							closed_meshconn,
-							timedout_meshconn,
-							reset_meshconn };
+static struct mesh_callbacks meshconn_callbacks = { recv_meshconn,
+                            send_meshconn,
+                            timedout_meshconn};
 /*---------------------------------------------------------------------------*/
 void
 shell_rsh_init(void)
 {
-  meshconn_open(&meshconn, 23, &meshconn_callbacks);
+  mesh_open(&meshconn, 23, &meshconn_callbacks);
   shell_register_command(&rsh_command);
 
   process_start(&shell_rsh_server_process, NULL);

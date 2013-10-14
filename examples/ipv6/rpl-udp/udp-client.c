@@ -136,7 +136,7 @@ set_global_address(void)
    uip_ip6addr(&server_ipaddr, 0xaaaa, 0, 0, 0, 0, 0, 0, 1);
 #elif 1
 /* Mode 2 - 16 bits inline */
-  uip_ip6addr(&server_ipaddr, 0xaaaa, 0, 0, 0, 0, 0x00ff, 0xfe00, 1);
+  uip_ip6addr(&server_ipaddr, 0xaaaa, 0, 0, 0, 0x280, 0xE103, 1, 0x36dd);
 #else
 /* Mode 3 - derived from server link-local (MAC) address */
   uip_ip6addr(&server_ipaddr, 0xaaaa, 0, 0, 0, 0x0250, 0xc2ff, 0xfea8, 0xcd1a); //redbee-econotag
