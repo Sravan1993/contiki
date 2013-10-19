@@ -63,10 +63,8 @@ class FTDI_Interface(object):
 		return returnValue
 
 	def getFTDIIdFromDevPort(self, port):
-		command = (('for udi in `hal-find-by-capability --capability serial`\n				do\n						parent=`hal-get-property --udi ${udi} --key "info.parent"`\n						device=`hal-get-property --udi ${udi} --key "linux.device_file"`\n						grandpa=`hal-get-property --udi ${parent} --key "info.parent"`\n						serial=`hal-get-property --udi ${grandpa} --key "usb_device.serial" 2>/dev/null`\n						if [ "${device}" = "' + port) + '" ]\n						then\n								printf "%s" "${serial}"\n								break\n						fi\n				done ')
-		p = subprocess.Popen([command], shell=True, stdout=subprocess.PIPE)
-		out = p.communicate()
-		return (out[0])
+		device = pyudev.Device.from_device_file(pyudev.Context(), port)
+		return device['ID_SERIAL']
 
 	def guessResetDirection(self, h):
 		if (self.resetValue is None or self.nBootValue is None):
