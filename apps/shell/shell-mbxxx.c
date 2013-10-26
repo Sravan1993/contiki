@@ -45,6 +45,7 @@
 #include "dev/stm32w-systick.h"
 #include "dev/stm32w-radio.h"
 #include "hal/micro/micro-common.h"
+#include "net/netstack.h"
 
 #include <stdio.h>
 
@@ -66,8 +67,7 @@ void sleep(unsigned int seconds)
   uint32_t wakeInfo;
   const struct sensors_sensor *sensor;
 
-  //TODO: Enabling the radio at the end of this function keeps it on, maybe sth has to be done in contikimac?
-  //radio_on = stm32w_radio_is_on();
+  NETSTACK_RDC.off(0);
   stm32w_radio_deinit();
 
   //TODO: Move tis functionality into sensors.c
@@ -120,9 +120,7 @@ void sleep(unsigned int seconds)
   }
 
   stm32w_radio_driver.init();
-  //if(radio_on) {
-  //    stm32w_radio_driver.on();
-  //}
+  NETSTACK_RDC.on();
 }
 /*--------------------------------------------------------------------------*/
 PROCESS_THREAD(shell_sleep_process, ev, data)
