@@ -40,6 +40,7 @@
 #include "contiki.h"
 #include "contiki-conf.h"
 #include "shell-rime-debug.h"
+#include "shell-rime-common.h"
 
 #include "dev/leds.h"
 
@@ -134,28 +135,24 @@ recv_broadcast(struct broadcast_conn *c, const rimeaddr_t *from)
 	 msg->data);
 }
 static const struct broadcast_callbacks broadcast_callbacks = {recv_broadcast};
+
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(shell_unicast_process, ev, data)
 {
   struct shell_input *input;
   static rimeaddr_t receiver;
   int len;
-  const char *nextptr;
   struct collect_msg *msg;
-  char buf[30];
+  char buf[RIMEADDR_SIZE * 4 + 1];
   
   PROCESS_BEGIN();
   
-  receiver.u8[0] = shell_strtolong(data, &nextptr);
-  if(nextptr == data || *nextptr != '.') {
-    shell_output_str(&unicast_command,
-		     "unicast <receiver>: recevier must be specified", "");
-    PROCESS_EXIT();
+  if (parse_rime_address(data, buf, sizeof(buf), receiver.u8)) {
+      shell_output_str(&unicast_command,
+                       "unicast <receiver>: recevier must be specified", "");
+      PROCESS_EXIT();
   }
-  ++nextptr;
-  receiver.u8[1] = shell_strtolong(nextptr, &nextptr);
 
-  snprintf(buf, sizeof(buf), "%d.%d", receiver.u8[0], receiver.u8[1]);
   shell_output_str(&unicast_command, "Sending unicast packets to ", buf);
 
   while(1) {

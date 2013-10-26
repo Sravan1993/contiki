@@ -40,6 +40,7 @@
 
 #include "shell.h"
 #include "net/rime.h"
+#include "shell-rime-common.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -68,21 +69,16 @@ PROCESS_THREAD(shell_rime_ping_process, ev, data)
   static struct etimer timeout, periodic;
   static rimeaddr_t receiver;
   struct rime_ping_msg *ping;
-  const char *nextptr;
-  char buf[32];
+  char buf[RIMEADDR_SIZE * 4 + 1];
 
   PROCESS_BEGIN();
 
-  receiver.u8[0] = shell_strtolong(data, &nextptr);
-  if(nextptr == data || *nextptr != '.') {
-    shell_output_str(&rime_ping_command,
-		     "ping <receiver>: recevier must be specified", "");
-    PROCESS_EXIT();
+  if (parse_rime_address(data, buf, sizeof(buf), receiver.u8)) {
+      shell_output_str(&rime_ping_command,
+                       "ping <receiver>: recevier must be specified", "");
+      PROCESS_EXIT();
   }
-  ++nextptr;
-  receiver.u8[1] = shell_strtolong(nextptr, &nextptr);
 
-  snprintf(buf, sizeof(buf), "%d.%d", receiver.u8[0], receiver.u8[1]);
   shell_output_str(&rime_ping_command, "Sending 4 pings to ", buf);
 
   for(i = 0; i < 4; ++i) {
