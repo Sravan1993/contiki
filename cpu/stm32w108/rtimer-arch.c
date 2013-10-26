@@ -44,6 +44,7 @@
 
 #include "sys/energest.h"
 #include "sys/rtimer.h"
+#include "hal/micro/micro-common.h"
 
 #define DEBUG 0
 #if DEBUG
@@ -165,4 +166,81 @@ rtimer_arch_schedule(rtimer_clock_t t)
      the rtimer event. */
 }
 /*---------------------------------------------------------------------------*/
+
+#if RDC_CONF_MCU_SLEEP
+void
+rtimer_arch_sleep(rtimer_clock_t howlong)
+{
+  //TODO convert howlong to timer value
+  int32u quarter_seconds = howlong * 4;
+  uint8_t radio_on;
+
+  halPowerDown();
+
+  ENERGEST_OFF(ENERGEST_TYPE_CPU);
+  halSleepForQsWithOptions(&quarter_seconds, 0);
+
+  //ATOMIC(
+
+        halPowerUp();
+
+        /* Adjust clock.c for the time spent sleeping */
+        unsigned long longhowlong=CLOCK_CONF_SECOND;
+        longhowlong*=howlong;
+        clock_adjust_ticks(longhowlong/RTIMER_ARCH_SECOND);
+
+   ENERGEST_ON(ENERGEST_TYPE_CPU);
+
+  SysTick_CLKSourceConfig(SysTick_CLKSource_HCLK);
+  SysTick_SetReload(RELOAD_VALUE);
+  SysTick_ITConfig(ENABLE);
+  SysTick_CounterCmd(SysTick_Counter_Enable);
+
+  //)
+
+  stm32w_radio_driver.init();
+
+  uart1_init(115200);
+  leds_init();
+  rtimer_init();
+
+  PRINTF("WakeInfo: %04x\r\n", halGetWakeInfo());
+
+
+//    CRM->WU_CNTLbits.TIMER_WU_EN = 1;
+//    CRM->WU_CNTLbits.RTC_WU_EN = 0;
+//    CRM->WU_TIMEOUT = howlong;
+
+//    /* the maca must be off before going to sleep */
+//    /* otherwise the mcu will reboot on wakeup */
+//    maca_off();
+
+//    CRM->SLEEP_CNTLbits.DOZE = 0;
+//    CRM->SLEEP_CNTLbits.RAM_RET = 3;
+//    CRM->SLEEP_CNTLbits.MCU_RET = 1;
+//    CRM->SLEEP_CNTLbits.DIG_PAD_EN = 1;
+//    CRM->SLEEP_CNTLbits.HIB = 1;
+
+//  /* wait for the sleep cycle to complete */
+//  while((*CRM_STATUS & 0x1) == 0) { continue; }
+//  /* write 1 to sleep_sync --- this clears the bit (it's a r1wc bit) and powers down */
+//  *CRM_STATUS = 1;
+
+//  /* asleep */
+
+//  /* wait for the awake cycle to complete */
+//  while((*CRM_STATUS & 0x1) == 0) { continue; }
+//  /* write 1 to sleep_sync --- this clears the bit (it's a r1wc bit) and finishes wakeup */
+//  *CRM_STATUS = 1;
+
+//    CRM->WU_CNTLbits.TIMER_WU_EN = 0;
+//    CRM->WU_CNTLbits.RTC_WU_EN = 1;
+
+//    /* reschedule clock ticks */
+//    clock_init();
+//    clock_adjust_ticks((CRM->WU_COUNT*CLOCK_CONF_SECOND)/rtc_freq);
+}
+#endif /* RDC_CONF_MCU_SLEEP */
+/*---------------------------------------------------------------------------*/
+
 /** @} */
