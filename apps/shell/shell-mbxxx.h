@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, STMicroelectronics.
+ * Copyright (c) 2013, Christian Taedcke <hacking@taedcke.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,40 +32,16 @@
 
 /**
  * \file
- *         mbxxx-specific Contiki shell
+ *         Header file for MBxxx-specific Contiki shell commands
  * \author
- *         Salvatore Pitrulli <salvopitru@users.sourceforge.net>
- *
+ *         Christian Taedcke <hacking@taedcke.com>
  */
 
-#include "contiki.h"
-#include "serial-shell.h"
+#ifndef __SHELL_MBXXX_H__
+#define __SHELL_MBXXX_H__
 
-#include "shell-sensors.h"
+#include "shell.h"
 
-/*---------------------------------------------------------------------------*/
-PROCESS(mbxxx_shell_process, "MBXXX Contiki shell");
-AUTOSTART_PROCESSES(&mbxxx_shell_process);
-/*---------------------------------------------------------------------------*/
-PROCESS_THREAD(mbxxx_shell_process, ev, data)
-{
-  PROCESS_BEGIN();
+void shell_mbxxx_init(void);
 
-  serial_shell_init();
-  shell_blink_init();
-  shell_ps_init();
-  shell_reboot_init();
-  shell_text_init();
-  shell_time_init();
-  shell_sensors_init();
-  shell_power_init();
-  shell_mbxxx_init();
-  
-#if COFFEE
-  shell_coffee_init();
-  shell_file_init();
-#endif
-
-  PROCESS_END();
-}
-/*---------------------------------------------------------------------------*/
+#endif /* __SHELL_MBXXX_H__ */

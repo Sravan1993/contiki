@@ -45,6 +45,10 @@ include $(CONTIKI)/apps/powertrace/Makefile.powertrace
 APPS += collect-view
 include $(CONTIKI)/apps/collect-view/Makefile.collect-view
 
+ifeq ($(TARGET),mbxxx)
+  shell_src += shell-mbxxx.c
+endif
+
 ifeq ($(TARGET),sky)
   shell_src += shell-sky.c shell-exec.c
 endif
