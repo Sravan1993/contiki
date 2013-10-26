@@ -59,5 +59,7 @@ short last_packet_rssi();
 
 int stm32w_radio_is_on(void);
 
+void stm32w_radio_deinit(void);
+
 #endif /* __STM32W_H__ */
 /** @} */

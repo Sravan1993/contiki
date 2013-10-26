@@ -72,6 +72,7 @@
 
 #if RDC_CONF_DEBUG_LED
 #define LED_RDC RDC_CONF_DEBUG_LED
+#undef LED_ACTIVITY
 #define LED_ACTIVITY 1
 #else
 #define LED_RDC 0
@@ -169,6 +170,7 @@ const RadioTransmitConfig radioTransmitConfig = {
   TRUE                          /* appendCrc; */
 };
 
+#undef MAC_RETRIES
 #define MAC_RETRIES 0
 
 /*
@@ -281,6 +283,10 @@ const struct radio_driver stm32w_radio_driver = {
 static int
 stm32w_radio_init(void)
 {
+  if (process_is_running(&stm32w_radio_process)) {
+      process_exit(&stm32w_radio_process);
+  }
+
   /* A channel also needs to be set. */
   ST_RadioSetChannel(RF_CHANNEL);
 
@@ -471,6 +477,24 @@ stm32w_radio_pending_packet(void)
 {
   return !RXBUFS_EMPTY();
 }
+static int
+stm32w_radio_off_force(void)
+{
+  //ignore the lock, txbuffer etc
+  if(onoroff == ON) {
+    PRINTF("stm32w: force radio off\n");
+    LED_RDC_OFF();
+    ST_RadioSleep();
+    onoroff = OFF;
+    CLEAN_TXBUF();
+    CLEAN_RXBUFS();
+
+    ENERGEST_OFF(ENERGEST_TYPE_LISTEN);
+    return 1;
+  }
+  return 0;
+}
+
 /*---------------------------------------------------------------------------*/
 static int
 stm32w_radio_off(void)
@@ -485,6 +509,7 @@ stm32w_radio_off(void)
   }
   /* off only if there is no transmission or reception of packet. */
   if(onoroff == ON && TXBUF_EMPTY() && !receiving_packet) {
+    PRINTF("stm32w: turn radio off\n");
     LED_RDC_OFF();
     ST_RadioSleep();
     onoroff = OFF;
@@ -718,5 +743,14 @@ short
 last_packet_rssi()
 {
   return last_rssi;
+}
+/*---------------------------------------------------------------------------*/
+void
+stm32w_radio_deinit(void)
+{
+  stm32w_radio_off_force();
+  if (process_is_running(&stm32w_radio_process)) {
+      process_exit(&stm32w_radio_process);
+  }
 }
 /** @} */
