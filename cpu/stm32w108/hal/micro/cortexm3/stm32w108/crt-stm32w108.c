@@ -325,6 +325,7 @@ void Reset_Handler(void)
   //
   main();
 }
+#define USE_HEAP
 #ifdef USE_HEAP
 static unsigned char __HEAP_START[1024*3-560+0x200];
 caddr_t _sbrk ( int incr )
