@@ -60,6 +60,12 @@ PROCESS_THREAD(mbxxx_shell_process, ev, data)
   shell_sensors_init();
   shell_power_init();
   shell_mbxxx_init();
+  shell_rime_debug_init();
+  shell_rime_netcmd_init();
+  shell_rime_ping_init(); /* Rime ping */
+  shell_rime_sendcmd_init();
+  shell_rime_sniff_init();
+  shell_rime_init();
   
 #if COFFEE
   shell_coffee_init();
