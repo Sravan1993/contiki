@@ -47,6 +47,7 @@ struct power_msg {
   uint16_t len;
   uint32_t cpu;
   uint32_t lpm;
+  uint32_t lpm2;
   uint32_t transmit;
   uint32_t listen;
   uint32_t idle_transmit;
@@ -81,7 +82,7 @@ SHELL_COMMAND(powergraph_command,
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(shell_power_process, ev, data)
 {
-  static uint32_t last_cpu, last_lpm, last_transmit, last_listen;
+  static uint32_t last_cpu, last_lpm, last_lpm2, last_transmit, last_listen;
   static uint32_t last_idle_transmit, last_idle_listen;
   struct power_msg msg;
 
@@ -89,9 +90,10 @@ PROCESS_THREAD(shell_power_process, ev, data)
 
   energest_flush();
   
-  msg.len = 12;
+  msg.len = 14;
   msg.cpu = energest_type_time(ENERGEST_TYPE_CPU) - last_cpu;
   msg.lpm = energest_type_time(ENERGEST_TYPE_LPM) - last_lpm;
+  msg.lpm2 = energest_type_time(ENERGEST_TYPE_LPM2) - last_lpm2;
   msg.transmit = energest_type_time(ENERGEST_TYPE_TRANSMIT) - last_transmit;
   msg.listen = energest_type_time(ENERGEST_TYPE_LISTEN) - last_listen;
   msg.idle_transmit = compower_idle_activity.transmit - last_idle_transmit;
@@ -100,6 +102,7 @@ PROCESS_THREAD(shell_power_process, ev, data)
 
   last_cpu = energest_type_time(ENERGEST_TYPE_CPU);
   last_lpm = energest_type_time(ENERGEST_TYPE_LPM);
+  last_lpm2 = energest_type_time(ENERGEST_TYPE_LPM2);
   last_transmit = energest_type_time(ENERGEST_TYPE_TRANSMIT);
   last_listen = energest_type_time(ENERGEST_TYPE_LISTEN);
   last_idle_listen = compower_idle_activity.listen;
@@ -118,9 +121,10 @@ PROCESS_THREAD(shell_energy_process, ev, data)
 
   energest_flush();
   
-  msg.len = 12;
+  msg.len = 14;
   msg.cpu = energest_type_time(ENERGEST_TYPE_CPU);
   msg.lpm = energest_type_time(ENERGEST_TYPE_LPM);
+  msg.lpm2 = energest_type_time(ENERGEST_TYPE_LPM2);
   msg.transmit = energest_type_time(ENERGEST_TYPE_TRANSMIT);
   msg.listen = energest_type_time(ENERGEST_TYPE_LISTEN);
   msg.idle_transmit = compower_idle_activity.transmit;
@@ -132,28 +136,44 @@ PROCESS_THREAD(shell_energy_process, ev, data)
 }
 /*---------------------------------------------------------------------------*/
 #define DEC2FIX(h,d) ((h * 64L) + (unsigned long)((d * 64L) / 1000L))
+#define CPU_CURRENT DEC2FIX(8L,0L) //8,0mA DEC2FIX(1L,800L)
+#define LPM_CURRENT DEC2FIX(3L,0L) //3,0mA DEC2FIX(0L,545L)
+#define LPM2_CURRENT DEC2FIX(0L,300L) //300uA
+#define TRANSMIT_CURRENT DEC2FIX(31L,0L) //DEC2FIX(17L,700L)
+#define RECEIVE_CURRENT DEC2FIX(26L,500L) //DEC2FIX(20L,0)
+#define SUPPLY_VOLTAGE 3L
 static void
 printpower(struct power_msg *msg)
 {
-  char buf[100];
+  char buf[110];
   unsigned long avg_power;
+  unsigned long avg_cur;
   unsigned long time;
 
-  time = msg->cpu + msg->lpm;
+  time = msg->cpu + msg->lpm + msg->lpm2;
   
-  avg_power = (3L *
-	       (msg->cpu       * DEC2FIX(1L,800L) +
-		msg->lpm       * DEC2FIX(0L,545L) +
-		msg->transmit  * DEC2FIX(17L,700L) +
-		msg->listen    * DEC2FIX(20L,0))) / ((64L * time) / 1000);
-  snprintf(buf, sizeof(buf), "CPU %d%% LPM %d%% tx %d%% rx %d%% idle tx %d%% idle rx %d%% tot %lu uW",
+  avg_cur = (msg->cpu       * CPU_CURRENT +
+        msg->lpm       * LPM_CURRENT +
+        msg->lpm2       * LPM2_CURRENT +
+        msg->transmit  * TRANSMIT_CURRENT +
+        msg->listen    * RECEIVE_CURRENT) / ((64L * time) / 1000);
+  avg_power = SUPPLY_VOLTAGE * avg_cur;
+  snprintf(buf, sizeof(buf), "CPU %d%% LPM %d%% LPM2 %d%% tx %d%% rx %d%% idle tx %d%% idle rx %d%% tot %lu uW %lu uA",
 	   (int)((100L * (unsigned long)msg->cpu) / time),
 	   (int)((100L * (unsigned long)msg->lpm) / time),
+	   (int)((100L * (unsigned long)msg->lpm2) / time),
 	   (int)((100L * (unsigned long)msg->transmit) / time),
 	   (int)((100L * (unsigned long)msg->listen) / time),
 	   (int)((100L * (unsigned long)msg->idle_transmit) / time),
 	   (int)((100L * (unsigned long)msg->idle_listen) / time),
-	   avg_power);
+       avg_power, avg_cur);
+
+  char power = ST_RadioGetPower();
+  printf("Power dBm: %d\r\n", (int) power);
+  shell_output_str(&powerconv_command, buf, "");
+
+  snprintf(buf, sizeof(buf), "CPU %d LPM %d LPM2 %d rx %d time %d",
+           msg->cpu, msg->lpm, msg->lpm2, msg->listen, time);
   shell_output_str(&powerconv_command, buf, "");
 }
 /*---------------------------------------------------------------------------*/
