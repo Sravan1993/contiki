@@ -58,7 +58,7 @@ static void
 recv(const rimeaddr_t *originator, uint8_t seqno, uint8_t hops)
 {
   printf("Sink got message from %d.%d, seqno %d, hops %d: len %d '%s'\n",
-	 originator->u8[0], originator->u8[1],
+         originator->u8[RIMEADDR_SIZE - 2], originator->u8[RIMEADDR_SIZE - 1],
 	 seqno, hops,
 	 packetbuf_datalen(),
 	 (char *)packetbuf_dataptr());
@@ -75,8 +75,8 @@ PROCESS_THREAD(example_collect_process, ev, data)
 
   collect_open(&tc, 130, COLLECT_ROUTER, &callbacks);
 
-  if(rimeaddr_node_addr.u8[0] == 1 &&
-     rimeaddr_node_addr.u8[1] == 0) {
+  if(rimeaddr_node_addr.u8[RIMEADDR_SIZE - 2] == 81 &&
+     rimeaddr_node_addr.u8[RIMEADDR_SIZE - 1] == 40) {
 	printf("I am sink\n");
 	collect_set_sink(&tc, 1);
   }
@@ -109,10 +109,10 @@ PROCESS_THREAD(example_collect_process, ev, data)
       parent = collect_parent(&tc);
       if(!rimeaddr_cmp(parent, &oldparent)) {
         if(!rimeaddr_cmp(&oldparent, &rimeaddr_null)) {
-          printf("#L %d 0\n", oldparent.u8[0]);
+          printf("#L %d.%d 0\n", oldparent.u8[RIMEADDR_SIZE - 2], parent->u8[RIMEADDR_SIZE - 1]);
         }
         if(!rimeaddr_cmp(parent, &rimeaddr_null)) {
-          printf("#L %d 1\n", parent->u8[0]);
+          printf("#L %d.%d 1\n", parent->u8[RIMEADDR_SIZE - 2], parent->u8[RIMEADDR_SIZE - 1]);
         }
         rimeaddr_copy(&oldparent, parent);
       }
