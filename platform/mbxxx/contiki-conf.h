@@ -59,7 +59,7 @@
 
 /* Radio and 802.15.4 params */
 /* 802.15.4 radio channel */
-#define RF_CHANNEL						16
+#define RF_CHANNEL						23
 /* 802.15.4 PAN ID */
 #define IEEE802154_CONF_PANID                                   0x1235
 /* Use EID 64, enable hardware autoack and address filtering */
