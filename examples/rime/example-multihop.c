@@ -243,6 +243,22 @@ PROCESS_THREAD(example_multihop_process, ev, data)
     to.u8[0] = 1;
     to.u8[1] = 0;
 
+        //0.128.225.3.0.1.81.40
+        to.u8[0] = 0;
+        to.u8[1] = 128;
+        to.u8[2] = 225;
+        to.u8[3] = 3;
+        to.u8[4] = 0;
+        to.u8[5] = 1;
+        to.u8[6] = 81;
+        to.u8[7] = 40;
+
+        if (rimeaddr_node_addr.u8[7] == 40) {
+            //0.128.225.3.0.1.54.221
+            to.u8[6] = 54;
+            to.u8[7] = 221;
+        }
+
     /* Send the packet. */
     multihop_send(&multihop, &to);
 
