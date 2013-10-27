@@ -64,6 +64,8 @@
 #define IEEE802154_CONF_PANID                                   0x1235
 /* Use EID 64, enable hardware autoack and address filtering */
 #define RIMEADDR_CONF_SIZE					8
+/* Rime Header size necessary for multihop and RIMEADDR_CONF_SIZE == 8 */
+#define PACKETBUF_CONF_HDR_SIZE                                 56
 #define UIP_CONF_LL_802154					1
 #define ST_CONF_RADIO_AUTOACK					1
 /* Number of buffers for incoming frames */
