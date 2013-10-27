@@ -50,7 +50,7 @@ struct channel {
   struct channel *next;
   uint16_t channelno;
   const struct packetbuf_attrlist *attrlist;
-  uint8_t hdrsize;
+  uint16_t hdrsize;
 };
 
 struct channel *channel_lookup(uint16_t channelno);
