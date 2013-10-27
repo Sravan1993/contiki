@@ -192,10 +192,10 @@ broadcast_recv(struct broadcast_conn *c, const rimeaddr_t *from)
   n->last_seqno = m->seqno;
 
   /* Print out a message. */
-  printf("broadcast message received from %d.%d with seqno %d, RSSI %u, LQI %u, avg seqno gap %d.%02d\n",
-         from->u8[0], from->u8[1],
+  printf("broadcast message received from %d.%d with seqno %d, RSSI %d dBm, LQI %u, avg seqno gap %d.%02d\n",
+         from->u8[RIMEADDR_SIZE - 2], from->u8[RIMEADDR_SIZE - 1],
          m->seqno,
-         packetbuf_attr(PACKETBUF_ATTR_RSSI),
+         (int8_t) packetbuf_attr(PACKETBUF_ATTR_RSSI),
          packetbuf_attr(PACKETBUF_ATTR_LINK_QUALITY),
          (int)(n->avg_seqno_gap / SEQNO_EWMA_UNITY),
          (int)(((100UL * n->avg_seqno_gap) / SEQNO_EWMA_UNITY) % 100));
@@ -219,7 +219,7 @@ recv_uc(struct unicast_conn *c, const rimeaddr_t *from)
      print out a message and return a UNICAST_TYPE_PONG. */
   if(msg->type == UNICAST_TYPE_PING) {
     printf("unicast ping received from %d.%d\n",
-           from->u8[0], from->u8[1]);
+           from->u8[RIMEADDR_SIZE - 2], from->u8[RIMEADDR_SIZE - 1]);
     msg->type = UNICAST_TYPE_PONG;
     packetbuf_copyfrom(msg, sizeof(struct unicast_message));
     /* Send it back to where it came from. */
@@ -281,7 +281,7 @@ PROCESS_THREAD(unicast_process, ev, data)
       for(i = 0; i < randneighbor; i++) {
         n = list_item_next(n);
       }
-      printf("sending unicast to %d.%d\n", n->addr.u8[0], n->addr.u8[1]);
+      printf("sending unicast to %d.%d\n", n->addr.u8[RIMEADDR_SIZE - 2], n->addr.u8[RIMEADDR_SIZE - 1]);
 
       msg.type = UNICAST_TYPE_PING;
       packetbuf_copyfrom(&msg, sizeof(msg));
