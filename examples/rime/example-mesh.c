@@ -71,7 +71,7 @@ static void
 recv(struct mesh_conn *c, const rimeaddr_t *from, uint8_t hops)
 {
   printf("Data received from %d.%d: %.*s (%d)\n",
-	 from->u8[0], from->u8[1],
+         from->u8[RIMEADDR_SIZE - 2], from->u8[RIMEADDR_SIZE - 1],
 	 packetbuf_datalen(), (char *)packetbuf_dataptr(), packetbuf_datalen());
 
   packetbuf_copyfrom(MESSAGE, strlen(MESSAGE));

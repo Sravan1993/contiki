@@ -107,8 +107,10 @@ remove_neighbor(void *n)
 {
   struct example_neighbor *e = n;
 
+  printf("Remove neighbor %d.%d\n", e->addr.u8[RIMEADDR_SIZE -2], e->addr.u8[RIMEADDR_SIZE - 1]);
   list_remove(neighbor_table, e);
   memb_free(&neighbor_mem, e);
+  printf("List size is %d.\n", list_length(neighbor_table));
 }
 /*---------------------------------------------------------------------------*/
 /*
@@ -133,6 +135,7 @@ received_announcement(struct announcement *a,
   for(e = list_head(neighbor_table); e != NULL; e = e->next) {
     if(rimeaddr_cmp(from, &e->addr)) {
       /* Our neighbor was found, so we update the timeout. */
+      printf("Rx announcment from neigbour %d.%d\n", e->addr.u8[RIMEADDR_SIZE -2], e->addr.u8[RIMEADDR_SIZE - 1]);
       ctimer_set(&e->ctimer, NEIGHBOR_TIMEOUT, remove_neighbor, e);
       return;
     }
@@ -144,7 +147,9 @@ received_announcement(struct announcement *a,
   e = memb_alloc(&neighbor_mem);
   if(e != NULL) {
     rimeaddr_copy(&e->addr, from);
+    printf("Add neigbour %d.%d\n", e->addr.u8[RIMEADDR_SIZE -2], e->addr.u8[RIMEADDR_SIZE - 1]);
     list_add(neighbor_table, e);
+    printf("List size is %d.\n", list_length(neighbor_table));
     ctimer_set(&e->ctimer, NEIGHBOR_TIMEOUT, remove_neighbor, e);
   }
 }
@@ -158,7 +163,7 @@ recv(struct multihop_conn *c, const rimeaddr_t *sender,
      const rimeaddr_t *prevhop,
      uint8_t hops)
 {
-  printf("multihop message received '%s'\n", (char *)packetbuf_dataptr());
+  printf("multihop message received '%s', hops %d\n", (char *)packetbuf_dataptr(), packetbuf_attr(PACKETBUF_ATTR_HOPS));
 }
 /*
  * This function is called to forward a packet. The function picks a
@@ -184,8 +189,8 @@ forward(struct multihop_conn *c,
     }
     if(n != NULL) {
       printf("%d.%d: Forwarding packet to %d.%d (%d in list), hops %d\n",
-	     rimeaddr_node_addr.u8[0], rimeaddr_node_addr.u8[1],
-	     n->addr.u8[0], n->addr.u8[1], num,
+             rimeaddr_node_addr.u8[RIMEADDR_SIZE - 2], rimeaddr_node_addr.u8[RIMEADDR_SIZE - 1],
+             n->addr.u8[RIMEADDR_SIZE - 2], n->addr.u8[RIMEADDR_SIZE - 1], num,
 	     packetbuf_attr(PACKETBUF_ATTR_HOPS));
       return &n->addr;
     }
@@ -196,6 +201,7 @@ forward(struct multihop_conn *c,
 }
 static const struct multihop_callbacks multihop_call = {recv, forward};
 static struct multihop_conn multihop;
+static struct etimer et;
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(example_multihop_process, ev, data)
 {
@@ -220,6 +226,7 @@ PROCESS_THREAD(example_multihop_process, ev, data)
 
   /* Set a dummy value to start sending out announcments. */
   announcement_set_value(&example_announcement, 0);
+  etimer_set(&et, CLOCK_SECOND * 10);
 
   /* Activate the button sensor. We use the button to drive traffic -
      when the button is pressed, a packet is sent. */
@@ -230,22 +237,45 @@ PROCESS_THREAD(example_multihop_process, ev, data)
     rimeaddr_t to;
 
     /* Wait until we get a sensor event with the button sensor as data. */
-    PROCESS_WAIT_EVENT_UNTIL(ev == sensors_event &&
-			     data == &button_sensor);
+    PROCESS_WAIT_EVENT_UNTIL((ev == sensors_event &&
+                             data == &button_sensor) || etimer_expired(&et));
 
-    /* Copy the "Hello" to the packet buffer. */
-    packetbuf_copyfrom("Hello", 6);
+    if(etimer_expired(&et)) {
+        announcement_bump(&example_announcement);
+        printf("Bump\n");
+        etimer_restart(&et);
+    }
 
-    /* Set the Rime address of the final receiver of the packet to
-       1.0. This is a value that happens to work nicely in a Cooja
-       simulation (because the default simulation setup creates one
-       node with address 1.0). */
-    to.u8[0] = 1;
-    to.u8[1] = 0;
+    if ((ev == sensors_event && data == &button_sensor)) {
+      /* Copy the "Hello" to the packet buffer. */
+      packetbuf_copyfrom("Hello", 6);
 
-    /* Send the packet. */
-    multihop_send(&multihop, &to);
+      /* Set the Rime address of the final receiver of the packet to
+         1.0. This is a value that happens to work nicely in a Cooja
+         simulation (because the default simulation setup creates one
+         node with address 1.0). */
+      to.u8[0] = 1;
+      to.u8[1] = 0;
 
+          //0.128.225.3.0.1.81.40
+          to.u8[0] = 0;
+          to.u8[1] = 128;
+          to.u8[2] = 225;
+          to.u8[3] = 3;
+          to.u8[4] = 0;
+          to.u8[5] = 1;
+          to.u8[6] = 81;
+          to.u8[7] = 40;
+
+          if (rimeaddr_node_addr.u8[7] == 40) {
+              //0.128.225.3.0.1.54.221
+              to.u8[6] = 54;
+              to.u8[7] = 221;
+          }
+
+      /* Send the packet. */
+      multihop_send(&multihop, &to);
+    }
   }
 
   PROCESS_END();

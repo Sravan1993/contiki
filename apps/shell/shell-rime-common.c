@@ -1,11 +1,5 @@
-/**
- * \addtogroup stm32w-cpu
- *
- * @{
- */
-
 /*
- * Copyright (c) 2007, Swedish Institute of Computer Science.
+ * Copyright (c) 2013, Christian Taedcke <hacking@taedcke.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,34 +26,64 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
+ * This file is part of the Contiki operating system.
+ *
  */
 
 /**
  * \file
- *         STM32W radio driver header file
+ *         Contains simple tool function common to multiple rime shells.
  * \author
- *         Adam Dunkels <adam@sics.se>
+ *         Christian Taedcke
  */
 
-#ifndef __STM32W_H__
-#define __STM32W_H__
-
 #include "contiki.h"
-#include "dev/radio.h"
-#include "hal/hal.h"
-#include "simplemac/include/phy-library.h"
+#include "contiki-conf.h"
+#include "shell.h"
+#include "shell-rime-common.h"
 
-#define STM32W_MAX_PACKET_LEN      127
+#include "net/rime.h"
 
-extern const struct radio_driver stm32w_radio_driver;
+#include <stdio.h>
 
-int stm32w_radio_set_channel(uint8_t channel);
+uint8_t print_rime_address(const unsigned char* rime_address, char* as_string, unsigned char as_string_size)
+{
+  unsigned int i;
+  int free_space;
+  int chars_written, chars_written_total;
 
-short last_packet_rssi();
+  free_space = as_string_size;
+  chars_written_total = 0;
+  for(i = 0; i < RIMEADDR_SIZE - 1; i++) {
+    chars_written = snprintf(as_string + chars_written_total, free_space, "%d.", rime_address[i]);
+    chars_written_total += chars_written;
+    free_space -= chars_written;
+    if(free_space <= 0){
+      return 1;
+    }
+  }
+  snprintf(as_string + chars_written_total, free_space, "%d", rime_address[i]);
 
-int stm32w_radio_is_on(void);
+  return 0;
 
-void stm32w_radio_deinit(void);
+}
 
-#endif /* __STM32W_H__ */
-/** @} */
+uint8_t parse_rime_address(const char* input, char* as_string, unsigned char as_string_size, unsigned char* rime_address)
+{
+  const char *nextptr;
+  const char *cursor;
+  unsigned int i;
+
+  memset(as_string, 0, as_string_size);
+  cursor = input;
+  for (i = 0; i < RIMEADDR_SIZE; i++) {
+    rime_address[i] = shell_strtolong(cursor, &nextptr);
+    if(nextptr == cursor || ((*nextptr != '.') && (i != RIMEADDR_SIZE - 1))) {
+
+      return 1;
+    }
+    cursor = ++nextptr;
+  }
+
+  return print_rime_address(rime_address, as_string, as_string_size);
+}

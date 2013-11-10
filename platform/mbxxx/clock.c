@@ -131,4 +131,16 @@ clock_seconds(void)
   return current_seconds;
 }
 /*--------------------------------------------------------------------------*/
+/**
+ * Adjust clock ticks after a cpu sleep.
+ */
+void clock_adjust_ticks(clock_time_t howmany) {
+/* Add seconds */
+	current_seconds += howmany / CLOCK_CONF_SECOND;
+/* Handle tick overflow */
+	if(((count % CLOCK_CONF_SECOND) + (howmany % CLOCK_CONF_SECOND)) >= CLOCK_CONF_SECOND) current_seconds++;
+/* Add ticks */
+	count += howmany;
+}
+/*--------------------------------------------------------------------------*/
 /** @} */

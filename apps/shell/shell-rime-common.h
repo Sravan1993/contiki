@@ -1,11 +1,5 @@
-/**
- * \addtogroup stm32w-cpu
- *
- * @{
- */
-
 /*
- * Copyright (c) 2007, Swedish Institute of Computer Science.
+ * Copyright (c) 2013, Christian Taedcke <hacking@taedcke.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,34 +26,40 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
+ * This file is part of the Contiki operating system.
+ *
  */
 
 /**
  * \file
- *         STM32W radio driver header file
+ *         Contains simple tool function common to multiple rime shells.
  * \author
- *         Adam Dunkels <adam@sics.se>
+ *         Christian Taedcke
  */
 
-#ifndef __STM32W_H__
-#define __STM32W_H__
+#ifndef __SHELL_RIME_COMMON_H__
+#define __SHELL_RIME_COMMON_H__
 
-#include "contiki.h"
-#include "dev/radio.h"
-#include "hal/hal.h"
-#include "simplemac/include/phy-library.h"
+/**
+ * TODO: doc
+ * @brief Parses the given rime address from the given string.
+ * @param input The user input from the shell. Must start with the rime address.
+ * @param as_string The rime address a a string is printed into this buffer.
+ * @param as_string_size The buffer size of as_string.
+ * @param rime_address The rime address is saved into this buffer. It must be of the size RIMEADDR_SIZE.
+ * @return The success of parsing the rime address.
+ *  \retval 0 if the rime address was parsed without any error.
+ *  \retval 1 if an error occured. In this case the output parameter are invalid.
+ */
+uint8_t parse_rime_address(const char* input, char* as_string, unsigned char as_string_size, unsigned char* rime_address);
 
-#define STM32W_MAX_PACKET_LEN      127
+/** TODO: doc
+ * @brief print_rime_address
+ * @param rime_address
+ * @param as_string
+ * @param as_string_size
+ * @return
+ */
+uint8_t print_rime_address(const unsigned char* rime_address, char* as_string, unsigned char as_string_size);
 
-extern const struct radio_driver stm32w_radio_driver;
-
-int stm32w_radio_set_channel(uint8_t channel);
-
-short last_packet_rssi();
-
-int stm32w_radio_is_on(void);
-
-void stm32w_radio_deinit(void);
-
-#endif /* __STM32W_H__ */
-/** @} */
+#endif /* __SHELL_RIME_COMMON_H__ */

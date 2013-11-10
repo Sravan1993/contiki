@@ -1,11 +1,5 @@
-/**
- * \addtogroup stm32w-cpu
- *
- * @{
- */
-
 /*
- * Copyright (c) 2007, Swedish Institute of Computer Science.
+ * Copyright (c) 2013, Christian Taedcke <hacking@taedcke.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,34 +26,22 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
+ * This file is part of the Contiki operating system.
+ *
  */
 
 /**
  * \file
- *         STM32W radio driver header file
+ *         Header file for MBxxx-specific Contiki shell commands
  * \author
- *         Adam Dunkels <adam@sics.se>
+ *         Christian Taedcke <hacking@taedcke.com>
  */
 
-#ifndef __STM32W_H__
-#define __STM32W_H__
+#ifndef __SHELL_MBXXX_H__
+#define __SHELL_MBXXX_H__
 
-#include "contiki.h"
-#include "dev/radio.h"
-#include "hal/hal.h"
-#include "simplemac/include/phy-library.h"
+#include "shell.h"
 
-#define STM32W_MAX_PACKET_LEN      127
+void shell_mbxxx_init(void);
 
-extern const struct radio_driver stm32w_radio_driver;
-
-int stm32w_radio_set_channel(uint8_t channel);
-
-short last_packet_rssi();
-
-int stm32w_radio_is_on(void);
-
-void stm32w_radio_deinit(void);
-
-#endif /* __STM32W_H__ */
-/** @} */
+#endif /* __SHELL_MBXXX_H__ */

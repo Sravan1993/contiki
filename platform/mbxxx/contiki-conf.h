@@ -59,11 +59,13 @@
 
 /* Radio and 802.15.4 params */
 /* 802.15.4 radio channel */
-#define RF_CHANNEL						16
+#define RF_CHANNEL						23
 /* 802.15.4 PAN ID */
 #define IEEE802154_CONF_PANID                                   0x1235
 /* Use EID 64, enable hardware autoack and address filtering */
 #define RIMEADDR_CONF_SIZE					8
+/* Rime Header size necessary for multihop and RIMEADDR_CONF_SIZE == 8 */
+#define PACKETBUF_CONF_HDR_SIZE                                 56
 #define UIP_CONF_LL_802154					1
 #define ST_CONF_RADIO_AUTOACK					1
 /* Number of buffers for incoming frames */
@@ -76,6 +78,8 @@
 #define RDC_CONF_HARDWARE_ACK					1
 /* TX routine does automatic cca and optional backoff */
 #define RDC_CONF_HARDWARE_CSMA					0
+/* Allow MCU sleeping between channel checks */
+#define RDC_CONF_MCU_SLEEP                      0
 /* RDC debug with LED */
 #define RDC_CONF_DEBUG_LED					1
 /* Channel check rate (per second) */
@@ -105,7 +109,7 @@
 #define XMAC_CONF_COMPOWER					1
 
 /* Other (RAM saving) */
-#define ENERGEST_CONF_ON					0
+#define ENERGEST_CONF_ON					1
 #define QUEUEBUF_CONF_NUM					2
 #define QUEUEBUF_CONF_REF_NUM					0
 #define NBR_TABLE_CONF_MAX_NEIGHBORS				4
