@@ -1,0 +1,53 @@
+#include <stdint.h>
+#include <stdio.h>
+#include <debug-uart.h>
+#include <sys/process.h>
+#include <sys/procinit.h>
+#include <etimer.h>
+#include <sys/autostart.h>
+#include <clock.h>
+#include <dev/leds.h>
+unsigned int idle_count = 0;
+
+
+int
+main()
+{
+    /// \todo ctae setup usb for printf
+  //dbg_setup_uart();
+  printf("Initialising\n");
+  
+  clock_init();
+  GPIOInit();
+  /* Led initialization */
+  leds_init();
+
+  //leds_off(LEDS_ALL);
+  leds_toggle(LEDS_RED);
+  process_init();
+//leds_off(LEDS_ALL);
+  leds_toggle(LEDS_RED);
+  process_start(&etimer_process, NULL);
+  leds_toggle(LEDS_RED);
+  //leds_off(LEDS_ALL);
+  autostart_start(autostart_processes);
+  leds_toggle(LEDS_RED);
+  //leds_off(LEDS_ALL);
+  printf("Processes running\n");
+  leds_toggle(LEDS_RED);
+  //leds_off(LEDS_ALL);
+  while(1) {
+    do {
+    } while(process_run() > 0);
+    idle_count++;
+    /* Idle! */
+    /* Stop processor clock */
+    /* asm("wfi"::); */ 
+    leds_off(LEDS_ALL);
+  }
+  return 0;
+}
+
+
+
+
