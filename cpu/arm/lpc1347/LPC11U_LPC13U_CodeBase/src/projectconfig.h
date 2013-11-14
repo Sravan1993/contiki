@@ -46,9 +46,103 @@
 extern "C" {
 #endif
 
+#include "sysdefs.h"
+#include "errors.h"
+
 #define CFG_MCU_LPC1347FBD48
 #define CFG_MCU_FAMILY_LPC13UXX
 #include "cmsis/LPC13Uxx.h"
+
+#define CFG_ENABLE_USB
+
+/*=========================================================================
+    USB
+
+    CFG_USB_STRING_MANUFACTURER Manufacturer name that will appear in the
+                                device descriptor during USB enumeration
+    CFG_USB_STRING_PRODUCT      Product name that will appear in the
+                                device descriptor during USB enumeration
+    CFG_USB_VENDORID            16-bit USB vendor ID
+    USB_PRODUCT_ID              Define this to set a custom product ID
+                                if you do not wish to use the 'auto'
+                                product ID feature
+    CFG_CDC                     Enable USB CDC support
+    CFG_USB_HID_KEYBOARD        Enable USB HID keyboard emulation
+    CFG_USB_HID_MOUSE           Enable USB HID mouse emulation for a five
+                                button 'Windows' mouse with scroll wheels
+    CFG_USB_HID_GENERIC         Enable USB HID Generic support for custom
+                                in and out reports, with report size set
+                                via CFG_USB_HID_GENERIC_REPORT_SIZE
+    CFG_USB_MSC                 Enable USB Mass Storage support, pointing
+                                to the SD card reader (requires mmc.c from
+                                the FATFS drivers, but doesn't use FATFS)
+
+
+    You can combine more than one USB class below and they will be
+    automatically combined in a USB composite device within the limit of
+    available USB endpoints.  The USB Product ID is calculated automatically
+    based on the combination of classes defined below.
+
+    NOTE: Windows requires the .inf file in '/core/usb' for CDC support
+    -----------------------------------------------------------------------*/
+    #ifdef CFG_ENABLE_USB
+      #define CFG_USB_STRING_MANUFACTURER       "Contiki"
+      #define CFG_USB_STRING_PRODUCT            "LPC1347 LPCXpresso"
+      #define CFG_USB_VENDORID                  (0x1FC9)
+
+      #define CFG_USB_CDC
+
+      // #define CFG_USB_HID_KEYBOARD
+// #define CFG_USB_HID_MOUSE
+    //#define CFG_USB_HID_GENERIC
+    //#define CFG_USB_HID_GENERIC_REPORT_SIZE (64)
+
+    // #define CFG_USB_MSC
+
+    // #define CFG_USB_CUSTOM_CLASS
+
+    #if (defined(CFG_USB_CDC)       || defined(CFG_USB_HID_KEYBOARD) || \
+         defined(CFG_USB_HID_MOUSE) || defined(CFG_USB_HID_GENERIC)  || \
+         defined(CFG_USB_MSC)       || defined(CFG_USB_CUSTOM_CLASS))
+      #define CFG_USB
+      #if defined(CFG_USB_HID_KEYBOARD) || defined(CFG_USB_HID_MOUSE) || defined(CFG_USB_HID_GENERIC)
+        #define CFG_USB_HID
+        #if defined(CFG_USB_HID_GENERIC) && (CFG_USB_HID_GENERIC_REPORT_SIZE > 64)
+          #error "CFG_USB_HID_GENERIC_REPORT_SIZE exceeds the maximum value of 64 bytes (based on USB specs 2.0 for 'Full Speed Interrupt Endpoint Size')"
+        #endif
+      #endif
+    #endif
+  #endif
+/*=========================================================================*/
+
+
+/*=========================================================================
+    PRINTF REDIRECTION
+    -----------------------------------------------------------------------
+
+    CFG_PRINTF_MAXSTRINGSIZE  Maximum size of string buffer for printf
+    CFG_PRINTF_UART           Will cause all printf statements to be
+                              redirected to UART
+    CFG_PRINTF_USBCDC         Will cause all printf statements to be
+                              redirect to USB Serial
+    CFG_PRINTF_NEWLINE        This is typically "\r\n" for Windows or
+                              "\n" for *nix
+
+    Note: If no printf redirection definitions are present, all printf
+    output will be ignored.
+    -----------------------------------------------------------------------*/
+    #define CFG_PRINTF_MAXSTRINGSIZE    (255)
+
+    // #define CFG_PRINTF_UART
+    #define CFG_PRINTF_USBCDC
+    // #define CFG_PRINTF_DEBUG
+
+    #ifdef CFG_PRINTF_DEBUG
+      #define CFG_PRINTF_NEWLINE          "\n"
+    #else
+      #define CFG_PRINTF_NEWLINE          "\r\n"
+    #endif
+/*=========================================================================*/
 
 #ifdef __cplusplus
 }
