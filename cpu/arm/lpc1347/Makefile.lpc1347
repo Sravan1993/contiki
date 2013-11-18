@@ -18,11 +18,11 @@ CONTIKI_CPU_DIRS = . ../common/dbg-io ../common/usb ./cmsis ./LPC11U_LPC13U_Code
 
 LPC1347     = clock.c newlib-syscalls.c # debug-uart.c startup_lpc13u_gnumake.c # interrupt-utils.c newlib-syscalls.c sys-interrupt.c rtimer-arch.c rtimer-arch-interrupt.c uip-log.c
 
-include $(CONTIKI_CPU_ARM_COMMON)/usb/Makefile.usb
+#include $(CONTIKI_CPU_ARM_COMMON)/usb/Makefile.usb
 
 #include $(CONTIKI_CPU_ARM_COMMON)/SD-card/Makefile.sdcard
 
-TARGETLIBS = random.c dbg-printf.c dbg-puts.c dbg-putchar.c dbg-sprintf.c dbg-snprintf.c strformat.c system_LPC13Uxx.c startup_lpc13u_gnumake.c leds.c leds-arch.c
+TARGETLIBS = random.c strformat.c system_LPC13Uxx.c startup_lpc13u_gnumake.c leds.c leds-arch.c rtimer-arch.c watchdog.c #dbg-printf.c dbg-puts.c dbg-putchar.c dbg-sprintf.c dbg-snprintf.c
 
 CODEBASE = gpio.c fifo.c delay.c iap.c descriptors.c usb_cdc.c usb_custom_class.c usbd.c usb_hid.c
 

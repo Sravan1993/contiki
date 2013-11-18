@@ -48,6 +48,7 @@ extern "C" {
 
 #include "sysdefs.h"
 #include "errors.h"
+#include "asserts.h"
 
 #define CFG_MCU_LPC1347FBD48
 #define CFG_MCU_FAMILY_LPC13UXX

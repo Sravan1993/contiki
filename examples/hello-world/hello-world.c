@@ -47,9 +47,18 @@ AUTOSTART_PROCESSES(&hello_world_process);
 PROCESS_THREAD(hello_world_process, ev, data)
 {
   PROCESS_BEGIN();
+   static struct etimer etimer;
 
   printf("Hello, world\n");
   
+  while(1) {
+    etimer_set(&etimer, CLOCK_SECOND);
+
+    PROCESS_WAIT_UNTIL(etimer_expired(&etimer));
+
+    printf("Tick start %d,int %d\r\n", etimer.timer.start, etimer.timer.interval);
+  }
+
   PROCESS_END();
 }
 /*---------------------------------------------------------------------------*/

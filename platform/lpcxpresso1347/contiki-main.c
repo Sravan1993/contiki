@@ -7,6 +7,9 @@
 #include <sys/autostart.h>
 #include <clock.h>
 #include <dev/leds.h>
+#include <usb/usbd.h>
+#include <gpio/gpio.h>
+
 unsigned int idle_count = 0;
 
 
@@ -22,6 +25,14 @@ main()
   /* Led initialization */
   leds_init();
 
+  usb_init();
+
+#if 0
+#if WITH_SERIAL_LINE_INPUT
+  uart1_set_input(serial_line_input_byte);
+  serial_line_init();
+#endif
+#endif
   //leds_off(LEDS_ALL);
   leds_toggle(LEDS_RED);
   process_init();
@@ -35,6 +46,7 @@ main()
   //leds_off(LEDS_ALL);
   printf("Processes running\n");
   leds_toggle(LEDS_RED);
+  printf("Starting contiki... \n");
   //leds_off(LEDS_ALL);
   while(1) {
     do {
