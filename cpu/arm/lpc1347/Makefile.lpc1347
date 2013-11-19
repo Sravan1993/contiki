@@ -22,7 +22,7 @@ LPC1347     = clock.c newlib-syscalls.c # debug-uart.c startup_lpc13u_gnumake.c 
 
 #include $(CONTIKI_CPU_ARM_COMMON)/SD-card/Makefile.sdcard
 
-TARGETLIBS = random.c strformat.c system_LPC13Uxx.c startup_lpc13u_gnumake.c leds.c leds-arch.c rtimer-arch.c watchdog.c #dbg-printf.c dbg-puts.c dbg-putchar.c dbg-sprintf.c dbg-snprintf.c
+TARGETLIBS = random.c strformat.c system_LPC13Uxx.c startup_lpc13u_gnumake.c leds.c leds-arch.c rtimer-arch.c watchdog.c lpc1347-cdc.c #dbg-printf.c dbg-puts.c dbg-putchar.c dbg-sprintf.c dbg-snprintf.c
 
 CODEBASE = gpio.c fifo.c delay.c iap.c descriptors.c usb_cdc.c usb_custom_class.c usbd.c usb_hid.c
 
@@ -66,7 +66,7 @@ CFLAGSNO = -I. -I$(CONTIKI)/core -I$(CONTIKI_CPU) -I$(CONTIKI_CPU)/cmsis \
            -DWITH_UIP -DWITH_ASCII \
            -Wall $(ARCH_FLAGS) -g
 
-CFLAGS  += $(CFLAGSNO) -O0 -DRUN_AS_SYSTEM -DROM_RUN
+CFLAGS  += $(CFLAGSNO) -Os -DRUN_AS_SYSTEM -DROM_RUN
 LDFLAGS += -L $(CONTIKI_CPU) -T $(LINKERSCRIPT) -nostartfiles -Xlinker --gc-sections -mcpu=cortex-m3 -mthumb
 
 CDEPFLAGS = $(CFLAGS) -D __MAKING_DEPS__

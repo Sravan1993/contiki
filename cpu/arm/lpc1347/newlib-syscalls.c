@@ -5,6 +5,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "dev/leds.h"
+
 
 bool usb_cdc_putc(uint8_t c);
 bool usb_cdc_getc(uint8_t *c);
@@ -68,6 +70,8 @@ _write(int file, const char *ptr, int len){
                 //ASM("NOP");
             }
             ptr++;
+            leds_toggle(LEDS_RED);
+
         }
         break;
     default:

@@ -32,7 +32,6 @@ SysTick_Handler(void)
 
   if (--second_countdown == 0) {
     current_seconds++;
-    leds_toggle(LEDS_RED);
     second_countdown = CLOCK_SECOND;
   }
 }

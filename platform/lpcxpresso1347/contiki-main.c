@@ -9,6 +9,7 @@
 #include <dev/leds.h>
 #include <usb/usbd.h>
 #include <gpio/gpio.h>
+#include "dev/serial-line.h"
 
 unsigned int idle_count = 0;
 
@@ -18,7 +19,6 @@ main()
 {
     /// \todo ctae setup usb for printf
   //dbg_setup_uart();
-  printf("Initialising\n");
   
   clock_init();
   GPIOInit();
@@ -27,12 +27,7 @@ main()
 
   usb_init();
 
-#if 0
-#if WITH_SERIAL_LINE_INPUT
-  uart1_set_input(serial_line_input_byte);
-  serial_line_init();
-#endif
-#endif
+  lpc1347_cdc_init(serial_line_input_byte);
   //leds_off(LEDS_ALL);
   leds_toggle(LEDS_RED);
   process_init();
@@ -55,7 +50,7 @@ main()
     /* Idle! */
     /* Stop processor clock */
     /* asm("wfi"::); */ 
-    leds_off(LEDS_ALL);
+    //leds_off(LEDS_ALL);
   }
   return 0;
 }
