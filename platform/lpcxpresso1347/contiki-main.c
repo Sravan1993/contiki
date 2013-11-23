@@ -23,21 +23,26 @@ unsigned int idle_count = 0;
 
 int
 main()
-{
-    /// \todo ctae setup usb for printf
-  //dbg_setup_uart();
-  
+{ 
   clock_init();
   GPIOInit();
-  /* Led initialization */
   leds_init();
 
   process_init();
 
   usb_init();
-
   lpc1347_cdc_init(serial_line_input_byte);
   serial_line_init();
+
+  PUTS(CONTIKI_VERSION_STRING);
+  PUTS(BOARD_STRING);
+
+  PRINTF(" Net: ");
+  PRINTF("%s\n", NETSTACK_NETWORK.name);
+  PRINTF(" MAC: ");
+  PRINTF("%s\n", NETSTACK_MAC.name);
+  PRINTF(" RDC: ");
+  PRINTF("%s\n", NETSTACK_RDC.name);
 
   leds_toggle(LEDS_RED);
 
@@ -46,9 +51,7 @@ main()
   leds_toggle(LEDS_RED);
    autostart_start(autostart_processes);
   leds_toggle(LEDS_RED);
-  PRINTF("Processes running\n");
   leds_toggle(LEDS_RED);
-  PRINTF("Starting contiki... \n");
   while(1) {
     do {
     } while(process_run() > 0);
