@@ -12,21 +12,26 @@ CONTIKI_CPU=$(CONTIKI_CPU_ARM)/lpc1347
 
 ### Define the source files we have in the LPC1347 port
 
-CONTIKI_CPU_DIRS = . ../common/dbg-io ../common/usb ./cmsis ./LPC11U_LPC13U_CodeBase/src/core/gpio ./LPC11U_LPC13U_CodeBase/src/core/usb ./LPC11U_LPC13U_CodeBase/src/core/usb/romdriver \
+CONTIKI_CPU_DIRS = . ../common/usb ./cmsis ./LPC11U_LPC13U_CodeBase/src/core/gpio ./LPC11U_LPC13U_CodeBase/src/core/usb ./LPC11U_LPC13U_CodeBase/src/core/usb/romdriver \
                     ./LPC11U_LPC13U_CodeBase/src/core/fifo ./LPC11U_LPC13U_CodeBase/src/core/delay ./LPC11U_LPC13U_CodeBase/src/core/iap
 
+### Use the existing debug I/O in cpu/arm/common
+CONTIKI_CPU_DIRS += ../common/dbg-io
 
-LPC1347     = clock.c newlib-syscalls.c # debug-uart.c startup_lpc13u_gnumake.c # interrupt-utils.c newlib-syscalls.c sys-interrupt.c rtimer-arch.c rtimer-arch-interrupt.c uip-log.c
+
+LPC1347     = clock.c lpc1347-cdc.c # newlib-syscalls.c debug-uart.c startup_lpc13u_gnumake.c # interrupt-utils.c newlib-syscalls.c sys-interrupt.c rtimer-arch.c rtimer-arch-interrupt.c uip-log.c
+
+DEBUG_IO_SOURCEFILES += dbg-printf.c dbg-snprintf.c dbg-sprintf.c strformat.c dbg-puts.c dbg-putchar.c
 
 #include $(CONTIKI_CPU_ARM_COMMON)/usb/Makefile.usb
 
 #include $(CONTIKI_CPU_ARM_COMMON)/SD-card/Makefile.sdcard
 
-TARGETLIBS = random.c strformat.c system_LPC13Uxx.c startup_lpc13u_gnumake.c leds.c leds-arch.c rtimer-arch.c watchdog.c lpc1347-cdc.c #dbg-printf.c dbg-puts.c dbg-putchar.c dbg-sprintf.c dbg-snprintf.c
+TARGETLIBS = random.c strformat.c system_LPC13Uxx.c startup_lpc13u_gnumake.c leds.c leds-arch.c rtimer-arch.c watchdog.c
 
 CODEBASE = gpio.c fifo.c delay.c iap.c descriptors.c usb_cdc.c usb_custom_class.c usbd.c usb_hid.c
 
-CONTIKI_TARGET_SOURCEFILES += $(LPC1347) $(SYSAPPS) $(ELFLOADER) \
+CONTIKI_TARGET_SOURCEFILES += $(LPC1347) $(DEBUG_IO_SOURCEFILES) $(SYSAPPS) $(ELFLOADER) \
             $(TARGETLIBS) $(CODEBASE) $(UIPDRIVERS) $(USB)
 
 CONTIKI_SOURCEFILES        += $(CONTIKI_TARGET_SOURCEFILES)
@@ -66,7 +71,7 @@ CFLAGSNO = -I. -I$(CONTIKI)/core -I$(CONTIKI_CPU) -I$(CONTIKI_CPU)/cmsis \
            -DWITH_UIP -DWITH_ASCII \
            -Wall $(ARCH_FLAGS) -g
 
-CFLAGS  += $(CFLAGSNO) -Os -DRUN_AS_SYSTEM -DROM_RUN
+CFLAGS  += $(CFLAGSNO) -O0 -DRUN_AS_SYSTEM -DROM_RUN
 LDFLAGS += -L $(CONTIKI_CPU) -T $(LINKERSCRIPT) -nostartfiles -Xlinker --gc-sections -mcpu=cortex-m3 -mthumb
 
 CDEPFLAGS = $(CFLAGS) -D __MAKING_DEPS__

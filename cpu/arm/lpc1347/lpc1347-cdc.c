@@ -49,3 +49,14 @@ lpc1347_cdc_init(int (*input) (unsigned char c))
 }
 
 
+unsigned int
+dbg_send_bytes(const unsigned char *s, unsigned int len)
+{
+    return usb_cdc_send(s, len);
+}
+
+void
+dbg_putchar(unsigned char c)
+{
+    usb_cdc_putc(c);
+}

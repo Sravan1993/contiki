@@ -135,7 +135,7 @@ extern "C" {
     #define CFG_PRINTF_MAXSTRINGSIZE    (255)
 
     // #define CFG_PRINTF_UART
-    #define CFG_PRINTF_USBCDC
+    // #define CFG_PRINTF_USBCDC
     // #define CFG_PRINTF_DEBUG
 
     #ifdef CFG_PRINTF_DEBUG
