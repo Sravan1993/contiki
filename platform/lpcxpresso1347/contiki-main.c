@@ -1,6 +1,5 @@
 #include <stdint.h>
 #include <stdio.h>
-#include <debug-uart.h>
 #include <sys/process.h>
 #include <sys/procinit.h>
 #include <etimer.h>

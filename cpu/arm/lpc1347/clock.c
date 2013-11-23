@@ -1,10 +1,7 @@
-//#include <stm32f10x_map.h>
-//#include <nvic.h>
 #include <cmsis/LPC13Uxx.h>
 #include <sys/clock.h>
 #include <sys/cc.h>
 #include <sys/etimer.h>
-//#include <debug-uart.h>
 #include <dev/leds.h>
 
 static volatile clock_time_t current_clock = 0;
