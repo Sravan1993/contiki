@@ -43,4 +43,13 @@ typedef unsigned int uip_stats_t;
 #define USB_EP2_SIZE 64
 
 #define RAND_MAX 0x7fff
+
+/* Netstack config */
+//#define NETSTACK_CONF_MAC					csma_driver
+//#define NETSTACK_CONF_RDC					contikimac_driver
+#define NETSTACK_CONF_MAC					nullmac_driver
+#define NETSTACK_CONF_RDC					sicslowmac_driver
+#define NETSTACK_CONF_FRAMER					framer_802154
+#define NETSTACK_CONF_RADIO					mrf24j40_driver
+
 #endif /* __CONTIKI_CONF_H__CDBB4VIH3I__ */

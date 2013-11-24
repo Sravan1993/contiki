@@ -145,6 +145,41 @@ extern "C" {
     #endif
 /*=========================================================================*/
 
+/*=========================================================================
+    SPI
+    -----------------------------------------------------------------------
+
+    CFG_SSP_SCK0_LOCATION     The location of the SCK pin for SSP0
+    CFG_SSP_MISO1_LOCATION    The location of the MISO1 pin for SSP1
+    CFG_SSP_MOSI1_LOCATION    The location of the MOSI1 pin for SSP1
+    CFG_SSP_SCK1_LOCATION     The location of the SCK pin for SSP1
+
+    -----------------------------------------------------------------------*/
+    #define CFG_SSP_SCK0_0_6            (6)     // Used by USBConnect
+    #define CFG_SSP_SCK0_0_10           (10)    // Used by SWD
+    #define CFG_SSP_SCK0_1_29           (29)
+
+    #define CFG_SSP_MISO1_0_22          (22)
+    #define CFG_SSP_MISO1_1_21          (21)
+    #define CFG_SSP_MOSI1_0_21          (21)
+    #define CFG_SSP_MOSI1_1_22          (22)
+    #define CFG_SSP_SCK1_1_15           (15)
+    #define CFG_SSP_SCK1_1_20           (20)
+
+    // Select the appropriate pin locations here
+    #define CFG_SSP_SCK0_LOCATION       (CFG_SSP_SCK0_1_29)
+    #define CFG_SSP_MISO1_LOCATION      (CFG_SSP_MISO1_0_22)
+    #define CFG_SSP_MOSI1_LOCATION      (CFG_SSP_MOSI1_0_21)
+    #define CFG_SSP_SCK1_LOCATION       (CFG_SSP_SCK1_1_15)
+
+/// \todo ctae set pol for at45 and mrf24
+    // Set the phase and polarity for SSP0 and SSP1
+    #define CFG_SSP_CPOL0               (0)
+    #define CFG_SSP_CPHA0               (1)   /* CC3000 = Mode 1 */
+    #define CFG_SSP_CPOL1               (0)
+    #define CFG_SSP_CPHA1               (0)
+/*=========================================================================*/
+
 #ifdef __cplusplus
 }
 #endif

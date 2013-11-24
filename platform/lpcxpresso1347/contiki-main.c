@@ -6,9 +6,10 @@
 #include <sys/autostart.h>
 #include <clock.h>
 #include <dev/leds.h>
-#include <usb/usbd.h>
+#include "usb/usbd.h"
 #include <gpio/gpio.h>
 #include "dev/serial-line.h"
+#include "netstack.h"
 
 #define STARTUP_CONF_VERBOSE 1
 
@@ -34,8 +35,8 @@ main()
   lpc1347_cdc_init(serial_line_input_byte);
   serial_line_init();
 
-  PUTS(CONTIKI_VERSION_STRING);
-  PUTS(BOARD_STRING);
+  PRINTF(CONTIKI_VERSION_STRING "\n");
+  PRINTF("LPCXPRESSO1347ßn");
 
   PRINTF(" Net: ");
   PRINTF("%s\n", NETSTACK_NETWORK.name);
