@@ -174,8 +174,8 @@ extern "C" {
 
 /// \todo ctae set pol for at45 and mrf24
     // Set the phase and polarity for SSP0 and SSP1
-    #define CFG_SSP_CPOL0               (0)
-    #define CFG_SSP_CPHA0               (1)   /* CC3000 = Mode 1 */
+    #define CFG_SSP_CPOL0               (0) /* The MRF24J40 supports SPI (mode 0,0) which requires that SCK idles in a low state. */
+    #define CFG_SSP_CPHA0               (0)
     #define CFG_SSP_CPOL1               (0)
     #define CFG_SSP_CPHA1               (0)
 /*=========================================================================*/

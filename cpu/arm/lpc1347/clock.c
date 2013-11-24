@@ -17,8 +17,8 @@ SysTick_Handler(void) __attribute__ ((interrupt));
 void
 SysTick_Handler(void)
 {
-    /// \todo ctae why reading CSR register here?
-  (void)SysTick->CTRL;
+   /* Clear the count flag */
+   (void)SysTick->CTRL;
 
   //clear pending flag
   SCB->ICSR = SCB_ICSR_PENDSTCLR_Msk;

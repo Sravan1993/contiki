@@ -10,6 +10,8 @@
 #include <gpio/gpio.h>
 #include "dev/serial-line.h"
 #include "netstack.h"
+#include "init-net.h"
+#include <lib/random.h>
 
 #define STARTUP_CONF_VERBOSE 1
 
@@ -21,6 +23,8 @@
 
 unsigned int idle_count = 0;
 
+/// \todo ctae get this number from device serial or compiler define
+#define UNIQUE_NO (45)
 
 int
 main()
@@ -29,6 +33,7 @@ main()
   GPIOInit();
   leds_init();
 
+  random_init(UNIQUE_NO);
   process_init();
 
   usb_init();
@@ -50,6 +55,9 @@ main()
   leds_toggle(LEDS_RED);
   process_start(&etimer_process, NULL);
   leds_toggle(LEDS_RED);
+
+  init_net(UNIQUE_NO);
+
    autostart_start(autostart_processes);
   leds_toggle(LEDS_RED);
   leds_toggle(LEDS_RED);

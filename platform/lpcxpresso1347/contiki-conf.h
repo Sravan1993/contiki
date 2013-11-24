@@ -34,22 +34,81 @@ typedef unsigned int uip_stats_t;
 
 #define UIP_CONF_TCP_FORWARD 1
 
-/* Prefix for relocation sections in ELF files */
-#define REL_SECT_PREFIX ".rel"
+#define RF_CHANNEL                              13
 
-#define CC_BYTE_ALIGNED __attribute__ ((packed, aligned(1)))
+#define PROFILE_CONF_ON 0
+#ifndef ENERGEST_CONF_ON
+#define ENERGEST_CONF_ON 1
+#endif /* ENERGEST_CONF_ON */
 
-#define USB_EP1_SIZE 64
-#define USB_EP2_SIZE 64
+#ifdef WITH_UIP6
+#define NETSTACK_CONF_NETWORK                   sicslowpan_driver
+#define NETSTACK_CONF_FRAMER                    framer_802154
+#define NETSTACK_CONF_MAC                       nullmac_driver
+#define NETSTACK_CONF_RDC                       nullrdc_driver
+#define NETSTACK_CONF_RADIO                     mrf24j40_driver
+#define RIMEADDR_CONF_SIZE                      8
+#else
+#define NETSTACK_CONF_NETWORK                   rime_driver
+#define NETSTACK_CONF_FRAMER                    framer_802154
+#define NETSTACK_CONF_MAC                       nullmac_driver
+#define NETSTACK_CONF_RDC                       nullrdc_driver
+#define NETSTACK_CONF_RADIO                     mrf24j40_driver
+#define RIMEADDR_CONF_SIZE                      2
+#endif
 
-#define RAND_MAX 0x7fff
+#define RDC_CONF_HARDWARE_CSMA                  1
 
-/* Netstack config */
-//#define NETSTACK_CONF_MAC					csma_driver
-//#define NETSTACK_CONF_RDC					contikimac_driver
-#define NETSTACK_CONF_MAC					nullmac_driver
-#define NETSTACK_CONF_RDC					sicslowmac_driver
-#define NETSTACK_CONF_FRAMER					framer_802154
-#define NETSTACK_CONF_RADIO					mrf24j40_driver
+#define CONTIKIMAC_CONF_WITH_CONTIKIMAC_HEADER  0
+
+#ifdef WITH_UIP6
+#define UIP_CONF_ROUTER                         1
+#ifndef UIP_CONF_IPV6_RPL
+#define UIP_CONF_IPV6_RPL                       1
+#endif /* UIP_CONF_IPV6_RPL */
+
+/* IPv6 configuration options */
+#define UIP_CONF_IPV6                           1
+#define NBR_TABLE_CONF_MAX_NEIGHBORS                    20 /* number of neighbors */
+#define UIP_CONF_DS6_ROUTE_NBU                  20 /* number of routes */
+#define UIP_CONF_ND6_SEND_RA                    0
+#define UIP_CONF_ND6_REACHABLE_TIME             600000
+#define UIP_CONF_ND6_RETRANS_TIMER              10000
+
+
+#define UIP_CONF_BUFFER_SIZE                    240
+
+#ifndef QUEUEBUF_CONF_NUM
+#define QUEUEBUF_CONF_NUM                       16
+#endif /* QUEUEBUF_CONF_NUM */
+
+/* UDP configuration options */
+#define UIP_CONF_UDP                            1
+#define UIP_CONF_UDP_CHECKSUMS                  1
+#define UIP_CONF_UDP_CONNS                      10
+
+/* 6lowpan options (for ipv6) */
+#define SICSLOWPAN_CONF_COMPRESSION             SICSLOWPAN_COMPRESSION_HC06
+#define SICSLOWPAN_CONF_MAX_ADDR_CONTEXTS       2
+#define SICSLOWPAN_CONF_COMPRESSION_THRESHOLD   63
+#ifndef SICSLOWPAN_CONF_FRAG
+#define SICSLOWPAN_CONF_FRAG                    1
+#define SICSLOWPAN_CONF_MAXAGE                  8
+#endif /* SICSLOWPAN_CONF_FRAG */
+
+/* General configuration options */
+#define UIP_CONF_STATISTICS                     0
+#define UIP_CONF_LOGGING                        0
+#define UIP_CONF_BROADCAST                      1
+#define UIP_CONF_LLH_LEN                        0
+#define UIP_CONF_LL_802154                      1
+#endif
+
+/* include the project config */
+/* PROJECT_CONF_H might be defined in the project Makefile */
+#ifdef PROJECT_CONF_H
+#include PROJECT_CONF_H
+#endif /* PROJECT_CONF_H */
+
 
 #endif /* __CONTIKI_CONF_H__CDBB4VIH3I__ */
