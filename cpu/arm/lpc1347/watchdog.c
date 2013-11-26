@@ -36,10 +36,11 @@ watchdog_start(void)
 
 void watchdog_periodic(void)
 {
-    __disable_irq();
+    uint32_t primask = __get_PRIMASK();
+    __set_PRIMASK(1);
     LPC_WWDT->FEED = 0xAA;
     LPC_WWDT->FEED = 0x55;
-    __enable_irq();
+    __set_PRIMASK(primask);
 }
 
 void watchdog_stop(void)

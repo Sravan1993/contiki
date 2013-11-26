@@ -1,5 +1,10 @@
+/**
+ * \addtogroup lpcxpresso1347-platform
+ *
+ * @{
+ */
 /*
- * Copyright (c) 2010, STMicroelectronics.
+ * Copyright (c) 2013, Christian Taedcke <hacking@taedcke.com>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,37 +37,17 @@
 
 /**
  * \file
- *         mbxxx-specific Contiki shell
+ *         Header file for Contik shell at45db command.
  * \author
- *         Salvatore Pitrulli <salvopitru@users.sourceforge.net>
- *
+ *         Christian Taedcke <hacking@taedcke.com>
  */
 
-#include "contiki.h"
-#include "serial-shell.h"
-#include "shell-at45db.h"
+#ifndef SHELL_AT45DB_H
+#define SHELL_AT45DB_H
 
-/*---------------------------------------------------------------------------*/
-PROCESS(mbxxx_shell_process, "LPCXPRESSO1347 Contiki shell");
-AUTOSTART_PROCESSES(&mbxxx_shell_process);
-/*---------------------------------------------------------------------------*/
-PROCESS_THREAD(mbxxx_shell_process, ev, data)
-{
-  PROCESS_BEGIN();
+#include "shell.h"
 
-  serial_shell_init();
-  shell_blink_init();
-  shell_ps_init();
-  shell_reboot_init();
-  shell_text_init();
-  shell_time_init();
-  shell_at45db_init();
-  
-#if COFFEE
-  shell_coffee_init();
-  shell_file_init();
-#endif
-  
-  PROCESS_END();
-}
-/*---------------------------------------------------------------------------*/
+void shell_at45db_init(void);
+
+#endif /* SHELL_AT45DB_H */
+/** @} */

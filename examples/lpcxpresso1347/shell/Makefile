@@ -1,10 +1,10 @@
 CONTIKI_PROJECT = lpcxpresso1347-shell
 
-#PROJECTDIRS = $(CONTIKI)/platform/mbxxx/apps
+PROJECTDIRS = $(CONTIKI)/platform/lpcxpresso1347/apps
 
 APPS = serial-shell
 
-#PROJECT_SOURCEFILES = shell-sensors.c
+PROJECT_SOURCEFILES = shell-at45db.c
 
 all: $(CONTIKI_PROJECT)
 

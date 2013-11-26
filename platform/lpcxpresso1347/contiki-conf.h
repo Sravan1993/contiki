@@ -104,6 +104,28 @@ typedef unsigned int uip_stats_t;
 #define UIP_CONF_LL_802154                      1
 #endif
 
+
+#define XMEM_ERASE_UNIT_SIZE (264L)
+
+#define CFS_CONF_OFFSET_TYPE    long
+
+/* Use the first 64k of external flash for node configuration */
+#define NODE_ID_XMEM_OFFSET     (0 * XMEM_ERASE_UNIT_SIZE)
+
+/* Use the second 64k of external flash for codeprop. */
+#define EEPROMFS_ADDR_CODEPROP  (1 * XMEM_ERASE_UNIT_SIZE)
+
+#define CFS_XMEM_CONF_OFFSET    (2 * XMEM_ERASE_UNIT_SIZE)
+#define CFS_XMEM_CONF_SIZE      (1 * XMEM_ERASE_UNIT_SIZE)
+
+#define CFS_RAM_CONF_SIZE 4096
+
+
+#define AT45DB_CSn_PORT   1
+#define AT45DB_CSn_PIN    19
+#define AT45DB_WPn_PORT   0
+#define AT45DB_WPn_PIN    23
+
 /* include the project config */
 /* PROJECT_CONF_H might be defined in the project Makefile */
 #ifdef PROJECT_CONF_H

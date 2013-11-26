@@ -12,8 +12,9 @@
 #include "netstack.h"
 #include "init-net.h"
 #include <lib/random.h>
+#include "dev/xmem.h"
 
-#define STARTUP_CONF_VERBOSE 1
+#define STARTUP_CONF_VERBOSE 0
 
 #if STARTUP_CONF_VERBOSE
 #define PRINTF(...) printf(__VA_ARGS__)
@@ -32,6 +33,7 @@ main()
   clock_init();
   GPIOInit();
   leds_init();
+  xmem_init();
 
   random_init(UNIQUE_NO);
   process_init();
@@ -56,7 +58,7 @@ main()
   process_start(&etimer_process, NULL);
   leds_toggle(LEDS_RED);
 
-  init_net(UNIQUE_NO);
+  //init_net(UNIQUE_NO);
 
    autostart_start(autostart_processes);
   leds_toggle(LEDS_RED);
