@@ -126,6 +126,14 @@ typedef unsigned int uip_stats_t;
 #define AT45DB_WPn_PORT   0
 #define AT45DB_WPn_PIN    23
 
+#ifndef NODE_ID
+#define NODE_ID 1
+#endif /* NODE_ID */
+
+#if NODE_ID == 1
+#define MRF24J40_PAN_COORDINATOR
+#endif /* NODE_ID == 1 */
+
 /* include the project config */
 /* PROJECT_CONF_H might be defined in the project Makefile */
 #ifdef PROJECT_CONF_H

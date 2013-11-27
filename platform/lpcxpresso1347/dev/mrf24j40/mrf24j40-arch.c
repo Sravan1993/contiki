@@ -51,14 +51,15 @@ void mrf24j40_arch_wake_pin(int val)
  */
 void mrf24j40_arch_hard_reset(int val)
 {
-    GPIOSetBitValue(MRF24J40_RESET_PORT, MRF24J40_RESET_PIN, val ? 0 : 1);
+    ///todo @ctae reset pin of mcu, should be special output!!
+    ///GPIOSetBitValue(MRF24J40_RESET_PORT, MRF24J40_RESET_PIN, val ? 0 : 1);
 }
 
 int mrf24j40_arch_init(void)
 {
 	/* Set the IO pins direction */
     GPIOSetDir(MRF24J40_WAKE_PORT, MRF24J40_WAKE_PIN, 1);
-    GPIOSetDir(MRF24J40_RESET_PORT, MRF24J40_RESET_PIN, 1);
+    //GPIOSetDir(MRF24J40_RESET_PORT, MRF24J40_RESET_PIN, 1);
     GPIOSetDir(MRF24J40_INT_PORT, MRF24J40_INT_PIN, 0);
     GPIOSetDir(MRF24J40_CSn_PORT, MRF24J40_CSn_PIN, 1);
 

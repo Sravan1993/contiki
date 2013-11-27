@@ -181,6 +181,7 @@ reset_rf_state_machine(void)
   set_short_add_mem(MRF24J40_RFCTL, rfctl | 0b00000100);
   set_short_add_mem(MRF24J40_RFCTL, rfctl & 0b11111011);
   
+  /// \todo ctae according to datasheet 192 usec should be enough
   clock_delay_usec(2500);
 }
 /*---------------------------------------------------------------------------*/
@@ -283,7 +284,7 @@ mrf24j40_get_extended_mac_addr(uint64_t *addr)
 void
 mrf24j40_set_tx_power(uint8_t pwr)
 {
-  set_long_add_mem(MRF24J40_RFCON3, pwr);
+  set_long_add_mem(MRF24J40_RFCON3, pwr & 0xF8);
 }
 /*---------------------------------------------------------------------------*/
 /**
@@ -406,7 +407,7 @@ mrf24j40_get_rxfifo(uint8_t *buf, uint8_t buf_len)
   /* Disable packet reception */
   set_short_add_mem(MRF24J40_BBREG1, 0b00000100);
 
-  /* Get packet length discarding 2 bytes (LQI, RSSI) */
+  /* Get packet length discarding 2 bytes (FCS) */
   len = get_long_add_mem(MRF24J40_RX_FIFO) - 2;
   
   if(len <= buf_len) {
@@ -481,7 +482,8 @@ wake(void)
   /* RF State Machine reset */
   set_short_add_mem(MRF24J40_RFCTL, 0b00000100);
   set_short_add_mem(MRF24J40_RFCTL, 0b00000000);
-    
+
+  /// @todo ctae wait at least 2 milliseconds for osc
   clock_delay_usec(2500);
 }
 /*---------------------------------------------------------------------------*/
@@ -768,6 +770,7 @@ mrf24j40_transmit(unsigned short len)
 
   /* Wait until the transmission has finished. */
   while(status_tx == MRF24J40_TX_WAIT) {
+      /// @todo ctae wait for interrupt, e.g. mrf24j40_arch_wfi
     ;
   }
   
@@ -799,11 +802,9 @@ mrf24j40_write(const void *data, uint16_t len)
   PRINTF("PREPARE & TRANSMIT %u bytes\n", len);
 
   if(mrf24j40_prepare(data, len))
-    return ret;
+    return -1;
 
-  ret = mrf24j40_transmit(len);
-  
-  return ret;
+  return mrf24j40_transmit(len);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -840,7 +841,12 @@ mrf24j40_cca(void)
 int
 mrf24j40_receiving_packet(void)
 {
-  return 0;
+    //if (!receive_on)
+    //    return 0;
+
+    /// @todo ctae read 0x20F anf check RX state, what are RTSEL ?
+    ///return ((mrf24j40_get_status() & (0x5 << 5)) == (0x5 << 5) ? 1 : 0);
+    return 0;
 }
 /*---------------------------------------------------------------------------*/
 int
@@ -859,6 +865,7 @@ void mrf24j40_irq_handler(void)
   int_status.val = get_short_add_mem(MRF24J40_INTSTAT);
 
   if(!int_status.val) {
+    ENERGEST_OFF(ENERGEST_TYPE_IRQ);
     return;  // FIXME - bad return path! (add energest _at least_)
   }
 

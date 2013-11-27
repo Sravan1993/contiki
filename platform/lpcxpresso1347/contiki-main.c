@@ -24,9 +24,6 @@
 
 unsigned int idle_count = 0;
 
-/// \todo ctae get this number from device serial or compiler define
-#define UNIQUE_NO (45)
-
 int
 main()
 { 
@@ -35,7 +32,7 @@ main()
   leds_init();
   xmem_init();
 
-  random_init(UNIQUE_NO);
+  random_init(NODE_ID);
   process_init();
 
   usb_init();
@@ -58,7 +55,7 @@ main()
   process_start(&etimer_process, NULL);
   leds_toggle(LEDS_RED);
 
-  //init_net(UNIQUE_NO);
+  init_net(NODE_ID);
 
    autostart_start(autostart_processes);
   leds_toggle(LEDS_RED);
