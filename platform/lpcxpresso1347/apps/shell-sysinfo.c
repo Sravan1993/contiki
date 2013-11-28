@@ -1,5 +1,10 @@
+/**
+ * \addtogroup lpcxpresso1347-platform
+ *
+ * @{
+ */
 /*
- * Copyright (c) 2010, STMicroelectronics.
+ * Copyright (c) 2013, Christian Taedcke <hacking@taedcke.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,42 +34,58 @@
  * This file is part of the Contiki operating system.
  *
  */
-
-/**
+ 
+ /**
  * \file
- *         mbxxx-specific Contiki shell
+ *          Shell function for the system configuration.
  * \author
- *         Salvatore Pitrulli <salvopitru@users.sourceforge.net>
- *
+ *          Christian Taedcke <hacking@taedcke.com>
  */
 
+#include <string.h>
+#include <stdio.h>
+
 #include "contiki.h"
-#include "serial-shell.h"
-#include "shell-at45db.h"
-#include "shell-sysinfo.h"
+#include "shell.h"
+#include "contiki-net.h"
 
 /*---------------------------------------------------------------------------*/
-PROCESS(mbxxx_shell_process, "LPCXPRESSO1347 Contiki shell");
-AUTOSTART_PROCESSES(&mbxxx_shell_process);
+PROCESS(shell_sysinfo_process, "sysinfo");
+SHELL_COMMAND(sysinfo_command,
+          "sysinfo",
+          "sysinfo: display system information",
+          &shell_sysinfo_process);
 /*---------------------------------------------------------------------------*/
-PROCESS_THREAD(mbxxx_shell_process, ev, data)
+PROCESS_THREAD(shell_sysinfo_process, ev, data)
 {
-  PROCESS_BEGIN();
-
-  serial_shell_init();
-  shell_blink_init();
-  shell_ps_init();
-  shell_reboot_init();
-  shell_text_init();
-  shell_time_init();
-  shell_at45db_init();
-  shell_sysinfo_init();
-
-#if COFFEE
-  shell_coffee_init();
-  shell_file_init();
-#endif
   
+  char str_buf[35];
+  uint8_t i;
+  int written;
+  char* cursor = str_buf;
+  
+  PROCESS_BEGIN();
+  shell_output_str(&sysinfo_command, "Version: ", CONTIKI_VERSION_STRING);
+  shell_output_str(&sysinfo_command, "Platform: ", "LPCXPRESSO1347");
+  shell_output_str(&sysinfo_command, "Net: ", NETSTACK_NETWORK.name);
+  shell_output_str(&sysinfo_command, "MAC: ", NETSTACK_MAC.name);
+  shell_output_str(&sysinfo_command, "RDC: ", NETSTACK_RDC.name);
+
+  for (i=0; i < RIMEADDR_SIZE; i++) {
+      written = sprintf(cursor, "%x ", rimeaddr_node_addr.u8[i]);
+      cursor += written;
+  }
+
+ shell_output_str(&sysinfo_command, "Rime Addr: ", str_buf);
+
+
   PROCESS_END();
 }
 /*---------------------------------------------------------------------------*/
+void
+shell_sysinfo_init(void)
+{
+  shell_register_command(&sysinfo_command);
+}
+/*---------------------------------------------------------------------------*/
+/** @} */

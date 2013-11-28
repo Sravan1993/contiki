@@ -40,7 +40,7 @@ main()
   serial_line_init();
 
   PRINTF(CONTIKI_VERSION_STRING "\n");
-  PRINTF("LPCXPRESSO1347ßn");
+  PRINTF("LPCXPRESSO1347\n");
 
   PRINTF(" Net: ");
   PRINTF("%s\n", NETSTACK_NETWORK.name);

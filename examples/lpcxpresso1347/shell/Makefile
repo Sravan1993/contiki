@@ -4,7 +4,7 @@ PROJECTDIRS = $(CONTIKI)/platform/lpcxpresso1347/apps
 
 APPS = serial-shell
 
-PROJECT_SOURCEFILES = shell-at45db.c
+PROJECT_SOURCEFILES = shell-at45db.c shell-sysinfo.c
 
 all: $(CONTIKI_PROJECT)
 
