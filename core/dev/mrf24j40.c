@@ -55,7 +55,7 @@
 #include "net/packetbuf.h"
 #include "net/netstack.h"
 
-//#define DEBUG 1
+#define DEBUG 0
 #if DEBUG
 #include <stdio.h>
 #define PRINTF(...) printf(__VA_ARGS__)
@@ -782,6 +782,7 @@ mrf24j40_transmit(unsigned short len)
     ENERGEST_ON(ENERGEST_TYPE_LISTEN);
   }
   
+  //printf("TX result %x\r\n", status_tx);
   switch(status_tx) {
   case MRF24J40_TX_ERR_NONE:
     return RADIO_TX_OK;

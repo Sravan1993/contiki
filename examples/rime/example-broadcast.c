@@ -53,7 +53,7 @@ AUTOSTART_PROCESSES(&example_broadcast_process);
 static void
 broadcast_recv(struct broadcast_conn *c, const rimeaddr_t *from)
 {
-  printf("broadcast message received from %d.%d: '%s'\n",
+  printf("broadcast message received from %d.%d: '%s'\r\n",
          from->u8[0], from->u8[1], (char *)packetbuf_dataptr());
 }
 static const struct broadcast_callbacks broadcast_call = {broadcast_recv};
@@ -78,7 +78,7 @@ PROCESS_THREAD(example_broadcast_process, ev, data)
 
     packetbuf_copyfrom("Hello", 6);
     broadcast_send(&broadcast);
-    printf("broadcast message sent\n");
+    printf("broadcast message sent\r\n");
   }
 
   PROCESS_END();

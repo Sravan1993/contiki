@@ -36,9 +36,9 @@ typedef unsigned int uip_stats_t;
 
 /* Radio and 802.15.4 params */
 /* 802.15.4 radio channel */
-#define RF_CHANNEL						16
+#define RF_CHANNEL						23
 /* 802.15.4 PAN ID */
-#define IEEE802154_CONF_PANID					0x1234
+#define IEEE802154_CONF_PANID					0x1235
 
 #define PROFILE_CONF_ON 0
 #ifndef ENERGEST_CONF_ON
