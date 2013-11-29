@@ -12,8 +12,8 @@ CONTIKI_CPU=$(CONTIKI_CPU_ARM)/lpc1347
 
 ### Define the source files we have in the LPC1347 port
 
-CONTIKI_CPU_DIRS = . ../common/usb ./cmsis ./LPC11U_LPC13U_CodeBase/src/core/gpio ./LPC11U_LPC13U_CodeBase/src/core/ssp0 ./LPC11U_LPC13U_CodeBase/src/core/ssp1 \
-                   ./LPC11U_LPC13U_CodeBase/src/core/timer16 ./LPC11U_LPC13U_CodeBase/src/core/timer32 ./LPC11U_LPC13U_CodeBase/src/core/usb \
+CONTIKI_CPU_DIRS = . ../common/usb ./cmsis dev ./LPC11U_LPC13U_CodeBase/src/core/gpio ./LPC11U_LPC13U_CodeBase/src/core/ssp0 ./LPC11U_LPC13U_CodeBase/src/core/ssp1 \
+                   ./LPC11U_LPC13U_CodeBase/src/core/timer16 ./LPC11U_LPC13U_CodeBase/src/core/timer32 ./LPC11U_LPC13U_CodeBase/src/core/eeprom ./LPC11U_LPC13U_CodeBase/src/core/usb \
                    ./LPC11U_LPC13U_CodeBase/src/core/usb/romdriver \
                    ./LPC11U_LPC13U_CodeBase/src/core/fifo ./LPC11U_LPC13U_CodeBase/src/core/delay ./LPC11U_LPC13U_CodeBase/src/core/iap
 
@@ -21,13 +21,13 @@ CONTIKI_CPU_DIRS = . ../common/usb ./cmsis ./LPC11U_LPC13U_CodeBase/src/core/gpi
 CONTIKI_CPU_DIRS += ../common/dbg-io
 
 
-LPC1347     = clock.c lpc1347-cdc.c
+LPC1347     = clock.c lpc1347-cdc.c eeprom.c
 
 DEBUG_IO_SOURCEFILES += dbg-printf.c dbg-snprintf.c dbg-sprintf.c strformat.c dbg-puts.c dbg-putchar.c
 
 TARGETLIBS = random.c strformat.c system_LPC13Uxx.c startup_lpc13u_gnumake.c leds.c leds-arch.c rtimer-arch.c watchdog.c
 
-CODEBASE = gpio.c fifo.c delay.c iap.c descriptors.c usb_cdc.c usb_custom_class.c usbd.c usb_hid.c ssp0.c ssp1.c timer16.c timer32.c
+CODEBASE = gpio.c fifo.c delay.c iap.c descriptors.c usb_cdc.c usb_custom_class.c usbd.c usb_hid.c ssp0.c ssp1.c timer16.c timer32.c eeprom.c
 
 CONTIKI_TARGET_SOURCEFILES += $(LPC1347) $(DEBUG_IO_SOURCEFILES) $(SYSAPPS) $(ELFLOADER) \
             $(TARGETLIBS) $(CODEBASE) $(UIPDRIVERS)

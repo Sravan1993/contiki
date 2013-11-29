@@ -134,6 +134,8 @@ typedef unsigned int uip_stats_t;
 #define MRF24J40_PAN_COORDINATOR
 #endif /* NODE_ID == 1 */
 
+#define EEPROM_CONF_SIZE        (4032)
+
 /* include the project config */
 /* PROJECT_CONF_H might be defined in the project Makefile */
 #ifdef PROJECT_CONF_H

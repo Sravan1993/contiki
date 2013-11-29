@@ -1,5 +1,10 @@
+/**
+ * \addtogroup lpcxpresso1347-platform
+ *
+ * @{
+ */
 /*
- * Copyright (c) 2010, STMicroelectronics.
+ * Copyright (c) 2013, Christian Taedcke <hacking@taedcke.com>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,43 +37,17 @@
 
 /**
  * \file
- *         mbxxx-specific Contiki shell
+ *         Header file for Contik shell mrf24j40 commands.
  * \author
- *         Salvatore Pitrulli <salvopitru@users.sourceforge.net>
- *
+ *         Christian Taedcke <hacking@taedcke.com>
  */
 
-#include "contiki.h"
-#include "serial-shell.h"
-#include "shell-at45db.h"
-#include "shell-sysinfo.h"
-#include "shell-mrf24j40.h"
+#ifndef SHELL_MRF24J40_H
+#define SHELL_MRF24J40_H
 
-/*---------------------------------------------------------------------------*/
-PROCESS(mbxxx_shell_process, "LPCXPRESSO1347 Contiki shell");
-AUTOSTART_PROCESSES(&mbxxx_shell_process);
-/*---------------------------------------------------------------------------*/
-PROCESS_THREAD(mbxxx_shell_process, ev, data)
-{
-  PROCESS_BEGIN();
+#include "shell.h"
 
-  serial_shell_init();
-  shell_blink_init();
-  shell_ps_init();
-  shell_reboot_init();
-  shell_text_init();
-  shell_time_init();
-  shell_at45db_init();
-  shell_sysinfo_init();
-  shell_mrf24j40_init();
-  shell_rime_init();
-  shell_rime_netcmd_init();
+void shell_mrf24j40_init(void);
 
-#if COFFEE
-  shell_coffee_init();
-  shell_file_init();
-#endif
-  
-  PROCESS_END();
-}
-/*---------------------------------------------------------------------------*/
+#endif /* SHELL_MRF24J40_H */
+/** @} */
