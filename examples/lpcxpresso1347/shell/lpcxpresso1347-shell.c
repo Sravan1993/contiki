@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, STMicroelectronics.
+ * Copyright (c) 2013, Christian Taedcke
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,9 +32,9 @@
 
 /**
  * \file
- *         mbxxx-specific Contiki shell
+ *         lpcxpresso1347-specific Contiki shell
  * \author
- *         Salvatore Pitrulli <salvopitru@users.sourceforge.net>
+ *         Christian Taedcke <hacking@taedcke.com>
  *
  */
 
@@ -45,10 +45,10 @@
 #include "shell-mrf24j40.h"
 
 /*---------------------------------------------------------------------------*/
-PROCESS(mbxxx_shell_process, "LPCXPRESSO1347 Contiki shell");
-AUTOSTART_PROCESSES(&mbxxx_shell_process);
+PROCESS(lpcxpresso1347_shell_process, "LPCXPRESSO1347 Contiki shell");
+AUTOSTART_PROCESSES(&lpcxpresso1347_shell_process);
 /*---------------------------------------------------------------------------*/
-PROCESS_THREAD(mbxxx_shell_process, ev, data)
+PROCESS_THREAD(lpcxpresso1347_shell_process, ev, data)
 {
   PROCESS_BEGIN();
 

@@ -34,7 +34,11 @@ typedef unsigned int uip_stats_t;
 
 #define UIP_CONF_TCP_FORWARD 1
 
-#define RF_CHANNEL                              13
+/* Radio and 802.15.4 params */
+/* 802.15.4 radio channel */
+#define RF_CHANNEL						16
+/* 802.15.4 PAN ID */
+#define IEEE802154_CONF_PANID					0x1234
 
 #define PROFILE_CONF_ON 0
 #ifndef ENERGEST_CONF_ON
@@ -54,7 +58,7 @@ typedef unsigned int uip_stats_t;
 #define NETSTACK_CONF_MAC                       nullmac_driver
 #define NETSTACK_CONF_RDC                       nullrdc_driver
 #define NETSTACK_CONF_RADIO                     mrf24j40_driver
-#define RIMEADDR_CONF_SIZE                      2
+#define RIMEADDR_CONF_SIZE                      8
 #endif
 
 #define RDC_CONF_HARDWARE_CSMA                  1

@@ -57,6 +57,7 @@
 #include <time.h>
 
 #include <mrf24j40.h>
+#include "iap/iap.h"
 
 #define DEBUG 0
 #if DEBUG
@@ -70,25 +71,39 @@
 void
 init_net(uint8_t node_id)
 {
+  uint8_t i;
   uint16_t shortaddr;
   uint64_t longaddr;
   rimeaddr_t addr;
+  uint32_t uid[4];
 #if WITH_UIP6
   uip_ds6_addr_t *lladdr;
   uip_ipaddr_t ipaddr;
 #endif
   
-  uint8_t i;
+  shortaddr = 0;
+  longaddr = 0;
 
-  memset(&shortaddr, 0, sizeof(shortaddr));
-  memset(&longaddr, 0, sizeof(longaddr));
-  *((uint8_t *)&shortaddr) = node_id >> 8;
-  *((uint8_t *)&shortaddr + 1) = node_id;
-  *((uint8_t *)&longaddr) = node_id >> 8;
-  *((uint8_t *)&longaddr + 1) = node_id;
-  for(i = 2; i < sizeof(longaddr); ++i) {
-    ((uint8_t *)&longaddr)[i] = random_rand();
+  if (iapReadUID(uid))
+  {
+      //error while reading uid
+      *((uint8_t *)&shortaddr) = node_id >> 8;
+      *((uint8_t *)&shortaddr + 1) = node_id;
+      *((uint8_t *)&longaddr) = node_id >> 8;
+      *((uint8_t *)&longaddr + 1) = node_id;
+      for(i = 2; i < sizeof(longaddr); ++i) {
+        ((uint8_t *)&longaddr)[i] = random_rand();
+      }
   }
+  else
+  {
+      //Convert 128-bit unique chip ID into 64 bit long address
+      shortaddr = uid[0] | uid[2];
+      longaddr = (uid[0] | uid[2]) | (((uint64_t)uid[1] | uid[3]) << 32);
+  }
+
+
+
   
   PRINTF("SHORT MAC ADDRESS %02x:%02x\n",
          *((uint8_t *) & shortaddr), *((uint8_t *) & shortaddr + 1));

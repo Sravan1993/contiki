@@ -59,10 +59,10 @@ SHELL_COMMAND(sysinfo_command,
 PROCESS_THREAD(shell_sysinfo_process, ev, data)
 {
   
-  char str_buf[35];
+  char str_buf[32];
   uint8_t i;
   int written;
-  char* cursor = str_buf;
+  char* cursor;
   
   PROCESS_BEGIN();
   shell_output_str(&sysinfo_command, "Version: ", CONTIKI_VERSION_STRING);
@@ -71,6 +71,7 @@ PROCESS_THREAD(shell_sysinfo_process, ev, data)
   shell_output_str(&sysinfo_command, "MAC: ", NETSTACK_MAC.name);
   shell_output_str(&sysinfo_command, "RDC: ", NETSTACK_RDC.name);
 
+  cursor = str_buf;
   for (i=0; i < RIMEADDR_SIZE; i++) {
       written = sprintf(cursor, "%x ", rimeaddr_node_addr.u8[i]);
       cursor += written;

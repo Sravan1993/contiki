@@ -21,11 +21,11 @@ CONTIKI_CPU_DIRS = . ../common/usb ./cmsis dev ./LPC11U_LPC13U_CodeBase/src/core
 CONTIKI_CPU_DIRS += ../common/dbg-io
 
 
-LPC1347     = clock.c lpc1347-cdc.c eeprom.c
+LPC1347     = clock.c lpc1347-cdc.c eeprom.c random.c
 
 DEBUG_IO_SOURCEFILES += dbg-printf.c dbg-snprintf.c dbg-sprintf.c strformat.c dbg-puts.c dbg-putchar.c
 
-TARGETLIBS = random.c strformat.c system_LPC13Uxx.c startup_lpc13u_gnumake.c leds.c leds-arch.c rtimer-arch.c watchdog.c
+TARGETLIBS = strformat.c system_LPC13Uxx.c startup_lpc13u_gnumake.c leds.c leds-arch.c rtimer-arch.c watchdog.c
 
 CODEBASE = gpio.c fifo.c delay.c iap.c descriptors.c usb_cdc.c usb_custom_class.c usbd.c usb_hid.c ssp0.c ssp1.c timer16.c timer32.c eeprom.c
 
