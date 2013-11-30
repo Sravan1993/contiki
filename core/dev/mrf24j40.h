@@ -89,6 +89,7 @@ void mrf24j40_arch_select(void);
 void mrf24j40_arch_deselect(void);
 void mrf24j40_arch_spi_write(uint8_t *data, int length);
 void mrf24j40_arch_spi_read(uint8_t *data, int length);
+void mrf24j40_arch_wfi();
 
 /* Long address registers */
 #define MRF24J40_RFCON0         (0x200)

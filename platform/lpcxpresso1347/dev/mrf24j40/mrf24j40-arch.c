@@ -121,3 +121,8 @@ void mrf24j40_arch_spi_write(uint8_t *data, int length) {
 void mrf24j40_arch_spi_read(uint8_t *data, int length) {
     ssp0Receive(data, length);
 }
+
+void mrf24j40_arch_wfi()
+{
+    __WFI();
+}

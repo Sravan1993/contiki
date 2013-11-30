@@ -780,8 +780,7 @@ mrf24j40_transmit(unsigned short len)
 
   /* Wait until the transmission has finished. */
   while(status_tx == MRF24J40_TX_WAIT) {
-      /// @todo ctae wait for interrupt, e.g. mrf24j40_arch_wfi
-    ;
+      mrf24j40_arch_wfi();
   }
   
   ENERGEST_OFF(ENERGEST_TYPE_TRANSMIT);
@@ -855,7 +854,7 @@ mrf24j40_receiving_packet(void)
     //if (!receive_on)
     //    return 0;
 
-    /// @todo ctae read 0x20F anf check RX state, what are RTSEL ?
+    /// @todo ctae read 0x20F and check RX state, what are RTSEL ?
     ///return ((mrf24j40_get_status() & (0x5 << 5)) == (0x5 << 5) ? 1 : 0);
     return 0;
 }
