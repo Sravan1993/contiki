@@ -57,6 +57,9 @@ void mrf24j40_arch_hard_reset(int val)
 
 int mrf24j40_arch_init(void)
 {
+
+     ssp0Init();
+
 	/* Set the IO pins direction */
     GPIOSetDir(MRF24J40_WAKE_PORT, MRF24J40_WAKE_PIN, 1);
     //GPIOSetDir(MRF24J40_RESET_PORT, MRF24J40_RESET_PIN, 1);
@@ -68,8 +71,6 @@ int mrf24j40_arch_init(void)
     /* falling edge*/
     GPIOSetPinInterrupt(MRF24J40_INT_CHANNEL, MRF24J40_INT_PORT, MRF24J40_INT_PIN, 0, 0);
 
-    ssp0Init();
-    ssp0ClockFast();
     mrf24j40_arch_irq_is_enabled = true;
 
 	return 0;
