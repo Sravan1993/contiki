@@ -851,11 +851,7 @@ mrf24j40_cca(void)
 int
 mrf24j40_receiving_packet(void)
 {
-    //if (!receive_on)
-    //    return 0;
-
-    /// @todo ctae read 0x20F and check RX state, what are RTSEL ?
-    ///return ((mrf24j40_get_status() & (0x5 << 5)) == (0x5 << 5) ? 1 : 0);
+    /* Not possible to detect if reception is in progress. */
     return 0;
 }
 /*---------------------------------------------------------------------------*/
