@@ -67,6 +67,18 @@
 PROCESS(mrf24j40_process, "MRF24J40 driver");
 /*---------------------------------------------------------------------------*/
 
+/* According to datasheet 192 usec should be enough */
+#define RESET_RF_STM_USEC (200)
+
+/* Wait at least 2 milliseconds for oscilattor after wake up. */
+#define WAKE_OSC_DELAY_USEC (2000)
+
+/* Wait at least 2 milliseconds for rf etc after hard reset. */
+#define HARD_RESET_DELAY_USEC (2000)
+
+/* No delay necessary after soft reset. */
+#define SOFT_RESET_DELAY_USEC (0)
+
 static volatile uint8_t mrf24j40_last_lqi;
 static volatile uint8_t mrf24j40_last_rssi;
 static volatile uint8_t status_tx;
@@ -181,8 +193,7 @@ reset_rf_state_machine(void)
   set_short_add_mem(MRF24J40_RFCTL, rfctl | 0b00000100);
   set_short_add_mem(MRF24J40_RFCTL, rfctl & 0b11111011);
   
-  /// \todo ctae according to datasheet 192 usec should be enough
-  clock_delay_usec(2500);
+  clock_delay_usec(RESET_RF_STM_USEC);
 }
 /*---------------------------------------------------------------------------*/
 void
@@ -483,8 +494,7 @@ wake(void)
   set_short_add_mem(MRF24J40_RFCTL, 0b00000100);
   set_short_add_mem(MRF24J40_RFCTL, 0b00000000);
 
-  /// @todo ctae wait at least 2 milliseconds for osc
-  clock_delay_usec(2500);
+  clock_delay_usec(WAKE_OSC_DELAY_USEC);
 }
 /*---------------------------------------------------------------------------*/
 int
@@ -531,9 +541,9 @@ mrf24j40_init(void)
   }
 
   mrf24j40_arch_hard_reset(1);
-  clock_delay_usec(2500);
+  clock_delay_usec(HARD_RESET_DELAY_USEC);
   mrf24j40_arch_hard_reset(0);
-  clock_delay_usec(2500);
+  clock_delay_usec(HARD_RESET_DELAY_USEC);
 
   /*
    * bit 7:3 reserved: Maintain as ‘0’
@@ -553,7 +563,7 @@ mrf24j40_init(void)
     i = get_short_add_mem(MRF24J40_SOFTRST);
   } while((i & 0b0000111) != 0);
   
-  clock_delay_usec(2500);
+  clock_delay_usec(SOFT_RESET_DELAY_USEC);
 
 
   /*
