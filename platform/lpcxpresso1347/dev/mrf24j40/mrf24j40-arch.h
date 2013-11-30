@@ -57,8 +57,10 @@
 #include "dev/radio.h"
 
 /* Pin Mapping */
+#if MRF24J40_HARD_RESET_CONNECTED
 #define MRF24J40_RESET_PORT                 0
 #define MRF24J40_RESET_PIN                  0
+#endif /*MRF24J40_HARD_RESET_CONNECTED */
 
 #define MRF24J40_INT_CHANNEL                0
 #define MRF24J40_INT_PORT                   1

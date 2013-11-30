@@ -13,7 +13,6 @@ static unsigned int second_countdown = CLOCK_SECOND;
 void
 SysTick_Handler(void) __attribute__ ((interrupt));
 
-/// \todo ctae FIX IT!!
 void
 SysTick_Handler(void)
 {
@@ -40,10 +39,9 @@ void
 clock_init()
 {
     SysTick_Config(SystemCoreClock / CLOCK_SECOND);
-    /// \todo ctae is this needed to set systick irqprio? else max value
     NVIC_SetPriority (SysTick_IRQn, 8);  /* set Priority for Systick Interrupt to 8 (high) */
 
-    /** Init timer for clock_delay_usec() */
+    /* Init timer for clock_delay_usec() */
     timer16Init(0);
 }
 

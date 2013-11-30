@@ -46,13 +46,16 @@ void mrf24j40_arch_wake_pin(int val)
 }
 
 /**
- * @param val logical value for asserting reset.
- * FIXME - make this proper doxygen style!
+ * @brief Perform or release hard reset on mrf24j40.
+ *
+ * @param val logical value for asserting reset, 1 means perform reset,
+ *            0 relases the radio from reset.
  */
 void mrf24j40_arch_hard_reset(int val)
 {
-    ///todo @ctae reset pin of mcu, should be special output!!
-    ///GPIOSetBitValue(MRF24J40_RESET_PORT, MRF24J40_RESET_PIN, val ? 0 : 1);
+#if MRF24J40_HARD_RESET_CONNECTED
+    GPIOSetBitValue(MRF24J40_RESET_PORT, MRF24J40_RESET_PIN, val ? 0 : 1);
+#endif /*MRF24J40_HARD_RESET_CONNECTED*/
 }
 
 int mrf24j40_arch_init(void)
@@ -62,13 +65,14 @@ int mrf24j40_arch_init(void)
 
 	/* Set the IO pins direction */
     GPIOSetDir(MRF24J40_WAKE_PORT, MRF24J40_WAKE_PIN, 1);
-    //GPIOSetDir(MRF24J40_RESET_PORT, MRF24J40_RESET_PIN, 1);
     GPIOSetDir(MRF24J40_INT_PORT, MRF24J40_INT_PIN, 0);
     GPIOSetDir(MRF24J40_CSn_PORT, MRF24J40_CSn_PIN, 1);
 
+#if MRF24J40_HARD_RESET_CONNECTED
+    GPIOSetDir(MRF24J40_RESET_PORT, MRF24J40_RESET_PIN, 1);
+#endif /* MRF24J40_HARD_RESET_CONNECTED */
 
-	/* Set interrupt registers and reset flags */
-    /* falling edge*/
+    /* Set interrupt registers and reset flags: falling edge */
     GPIOSetPinInterrupt(MRF24J40_INT_CHANNEL, MRF24J40_INT_PORT, MRF24J40_INT_PIN, 0, 0);
 
     mrf24j40_arch_irq_is_enabled = true;
