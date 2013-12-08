@@ -110,12 +110,12 @@ void mrf24j40_arch_deselect(void)
 __attribute__ ((section(".after_vectors")))
 void PIN_INT0_IRQHandler(void)
 {
-    if ( LPC_GPIO_PIN_INT->IST & 0x1 )
+    if ( GPIOPinIntStatus(MRF24J40_INT_CHANNEL) )
     {
         mrf24j40_irq_handler();
     }
     // Clear the interrupt
-    LPC_GPIO_PIN_INT->IST = 0x1;
+    GPIOPinIntClear(MRF24J40_INT_CHANNEL);
 }
 
 void mrf24j40_arch_spi_write(uint8_t *data, int length) {
