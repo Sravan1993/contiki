@@ -13,6 +13,8 @@
 #include "init-net.h"
 #include <lib/random.h>
 #include "dev/xmem.h"
+#include "dev/button-sensor.h"
+#include "dev/radio-sensor.h"
 
 #define STARTUP_CONF_VERBOSE 0
 
@@ -21,6 +23,8 @@
 #else
 #define PRINTF(...)
 #endif
+
+SENSORS(&button_sensor, &radio_sensor);
 
 unsigned int idle_count = 0;
 
@@ -31,6 +35,7 @@ main()
   GPIOInit();
   leds_init();
   xmem_init();
+  rtimer_init();
 
   random_init(NODE_ID);
   process_init();
@@ -54,6 +59,8 @@ main()
   leds_toggle(LEDS_RED);
   process_start(&etimer_process, NULL);
   leds_toggle(LEDS_RED);
+
+  process_start(&sensors_process, NULL);
 
   init_net(NODE_ID);
 
