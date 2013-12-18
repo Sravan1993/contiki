@@ -35,7 +35,7 @@ main()
   GPIOInit();
   leds_init();
   xmem_init();
-  //rtimer_init();
+  rtimer_init();
 
   random_init(NODE_ID);
   process_init();

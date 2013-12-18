@@ -1,6 +1,6 @@
 #include "rtimer-arch.h"
-//#include "rtimer-arch-interrupt.h"
-
+#include "energest.h"
+#include "LPC13Uxx.h"
 #define DEBUG 1
 #if DEBUG
 #include <stdio.h>
@@ -9,54 +9,81 @@
 #define PRINTF(...)
 #endif
 
-void
-rtimer_arch_set(rtimer_clock_t t)
-{
+//todo ctae doc and check
 
-}
-
-rtimer_clock_t
-rtimer_arch_now(void)
-{
-    return 0;
-}
-
-#if 0
-static rtimer_clock_t offset;
-
+/*---------------------------------------------------------------------------*/
+/**
+ * \brief Initialize the RI timer register.
+ *
+ *        The RI Timer starts ticking automatically as soon as the device
+ *        turns on. We don't need to turn on interrupts before the first call
+ *        to rtimer_arch_schedule()
+ */
 void
 rtimer_arch_init(void)
 {
-  offset = 0;
-  RTIMER_ARCH_TIMER_BASE->TC_CMR =
-    (AT91C_TC_WAVE | AT91C_TC_WAVESEL_UP | AT91C_TC_CLKS_TIMER_DIV5_CLOCK);
-  RTIMER_ARCH_TIMER_BASE->TC_RA = 0xffff;
-  RTIMER_ARCH_TIMER_BASE->TC_IER = AT91C_TC_CPAS;
-  *AT91C_PMC_PCER = (1 << RTIMER_ARCH_TIMER_ID);
-  AT91C_AIC_SMR[RTIMER_ARCH_TIMER_ID] =
-    AT91C_AIC_SRCTYPE_INT_POSITIVE_EDGE | 6;
-  AT91C_AIC_SVR[RTIMER_ARCH_TIMER_ID] =  (unsigned long)rtimer_interrupt;
-  *AT91C_AIC_IECR = (1 << RTIMER_ARCH_TIMER_ID);
-  RTIMER_ARCH_TIMER_BASE->TC_CCR = AT91C_TC_SWTRG | AT91C_TC_CLKEN;
-  PRINTF("rtimer_arch_init: Done\n");
-}
+    //set counter value to 0 ao successful comaprison
+    LPC_RITIMER->CTRL |= (1 << 1);
 
+    //ignore the bits 33 to 48 -> only count 32 bit
+    LPC_RITIMER->MASK_H = 0x0000FFFF;
+
+}
+/*---------------------------------------------------------------------------*/
+/**
+ * \brief Schedules an rtimer task to be triggered at time t
+ * \param t The time when the task will need executed. This is an absolute
+ *          time, in other words the task will be executed AT time \e t,
+ *          not IN \e t ticks
+ */
 void
 rtimer_arch_schedule(rtimer_clock_t t)
 {
-  RTIMER_ARCH_TIMER_BASE->TC_RA = t + offset;
-  PRINTF("rtimer_arch_schedule: %d\n",t);
-}
+  rtimer_clock_t now;
+  uint32_t primask = __get_PRIMASK();
 
+  __set_PRIMASK(1);
+
+  now = RTIMER_NOW();
+
+  /*
+   * New value must be a few ticks in the future.
+   */
+  if((int32_t)(t - now) < 20) {
+    t = now + 20;
+  }
+
+  LPC_RITIMER->COMPVAL = t;
+
+   __set_PRIMASK(primask);
+
+  NVIC_EnableIRQ(RIT_IRQn);
+}
+/*---------------------------------------------------------------------------*/
+/**
+ * \brief The rtimer ISR
+ *
+ *        Interrupts are only turned on when we have an rtimer task to schedule
+ *        Once the interrupt fires, the task is called and then interrupts no
+ *        longer get acknowledged until the next task needs scheduled.
+ */
+__attribute__ ((section(".after_vectors")))
 void
-rtimer_arch_set(rtimer_clock_t t)
+OSTIMER_IRQHandler(void)
 {
-  offset = t -  RTIMER_ARCH_TIMER_BASE->TC_CV;
-}
+  ENERGEST_ON(ENERGEST_TYPE_IRQ);
 
+  //clear RIT interrupt
+  LPC_RITIMER->CTRL |= 1;
+  NVIC_DisableIRQ(RIT_IRQn);
+
+  rtimer_run_next();
+
+  ENERGEST_OFF(ENERGEST_TYPE_IRQ);
+}
+/*---------------------------------------------------------------------------*/
 rtimer_clock_t
 rtimer_arch_now(void)
 {
-  return RTIMER_ARCH_TIMER_BASE->TC_CV + offset;
+    return LPC_RITIMER->COUNTER;
 }
-#endif

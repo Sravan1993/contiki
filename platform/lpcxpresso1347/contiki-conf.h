@@ -22,6 +22,14 @@ typedef int32_t s32_t;
 typedef unsigned int clock_time_t;
 typedef unsigned int uip_stats_t;
 
+/*
+ * rtimer.h typedefs rtimer_clock_t as unsigned short. We need to define
+ * RTIMER_CLOCK_LT to override this
+ */
+typedef uint32_t rtimer_clock_t;
+#define RTIMER_CLOCK_LT(a,b)     ((int32_t)((a)-(b)) < 0)
+
+
 #ifndef BV
 #define BV(x) (1<<(x))
 #endif
